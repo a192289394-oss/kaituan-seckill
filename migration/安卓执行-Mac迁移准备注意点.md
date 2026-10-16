@@ -1,3 +1,5 @@
+> **历史材料，不是产品安装路径。** 新装一套请看 [`docs/AI-INSTALL.md`](../docs/AI-INSTALL.md)。下文里的主机、域名、worker 名都是当时记录（`EXAMPLE_LIVE_ONLY`），禁止当作新装默认值。
+
 # Mac 执行侧 · 迁入 dashboard 准备注意点
 
 状态：先准备、不真迁。执行机仍是 macOS（BlueStacks + 来客）。
