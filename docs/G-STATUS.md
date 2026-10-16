@@ -2,14 +2,14 @@
 
 对照产品化安装缺口（G1–G18）。本表只记状态，不改运行代码。
 
-> 目标已按 [GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2) 改定：别的 Mac 跑通「API/自写前端下单 → 模拟器来客执行 → API 读回执」。交付链路与 API，不是现网皮。ALIGN 拷皮挂起。不像现网皮**不算**缺口。
+> 目标已按 [GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2) 改定：别的 Mac 跑通「API 或自写前端下单 → Mac 来客（开团路径会用到销帮）执行 → API 读回执」。主执行来客 `com.bytedance.ls.merchant`；销帮 `com.bytedance.lifeservice.crm`。交付链路与 API，不是现网皮。ALIGN 拷皮挂起。不像现网皮**不算**缺口。
 
 状态取值：`open` / `in this PR` / `blocked on other PR`。
 
 | # | 缺口 | 状态 | 说明 |
 |---|---|---|---|
 | G1 | 没有产品化主安装文档 | in this PR | `docs/AI-INSTALL.md`、`docs/README-人类安装.md` |
-| G2 | Mac 启动器写死现网 server / worker-id | blocked on other PR | **新装必配**自己的 server 与 worker-id。参数化在 [GitHub #4](https://github.com/a192289394-oss/kaituan-seckill/pull/4)（原 PR-3），**合入等点头**。本 PR 不改 `trigger_launch.py`。现网值只在 `EXAMPLE_LIVE_ONLY` |
+| G2 | Mac 启动器写死现网 server / worker-id | blocked on other PR | **新装必配**自己的 server 与 worker-id。参数化在 [GitHub #4](https://github.com/a192289394-oss/kaituan-seckill/pull/4)（原 PR-3），**合入等 Mac 回归书面确认**。本 PR 不改 `trigger_launch.py`。现网值只在 `EXAMPLE_LIVE_ONLY` |
 | G3 | 仓库内没有 nginx example 文件 | blocked on other PR | 样板文件属后续 PR。AI-INSTALL §6.5 已给出独立登录（不注入 Bearer）的 nginx 正文 |
 | G4 | 文档默认独立登录 | in this PR | 默认是网关 `POST /api/login` 与 Bearer。仓内静态页标为 OPTIONAL 调试壳 / 非交付皮。site-entry 仍为 OPTIONAL |
 | G5 | `migration/` 喧宾夺主 | in this PR | 每个 `migration/*.md` 顶部加了历史横幅，指向 `docs/AI-INSTALL.md` |

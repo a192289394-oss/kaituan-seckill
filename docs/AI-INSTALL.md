@@ -1,4 +1,4 @@
-> **交付说明：** 交付的是**链路与 API（协议与执行能力）**，不是现网皮。ALIGN 拷皮挂起。口径以 **[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)** 为准。不宣称「装完 = 现网能力」或「装完 = 现网皮」。
+> **交付说明：** 交付的是**链路与 API（协议与执行能力：queue / claim / gate / report、来客执行、API 回执）**，不是现网皮。ALIGN 拷皮挂起，不是合并必做。口径以 **[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)** 为准。不宣称「装完 = 现网能力」或「装完 = 现网皮」。
 
 # 开团 / 秒杀自动化 · AI 可读安装说明书（AI-INSTALL）
 
@@ -11,7 +11,7 @@
 
 ## 0. 一句话
 
-**API 或自写前端下单 → Mac 模拟器来客执行（开团路径会用到销帮）→ API 读回执。**
+**API 或自写前端下单 → Mac 来客（开团路径会用到销帮）执行 → API 读回执。**
 
 目的：让**别的 Mac**跑通这条链路。主交付 = 本说明书 + 可运行的 gateway/worker 源码 + 标准接口（对方自写前端）。一套 = **1 gateway + 1 Mac worker**。第 6、7 章是安装步骤。
 
@@ -256,7 +256,7 @@ GATEWAY_WORKER_ID=mac-worker-1
 | `--ca-file` | 可选：自签/私有 CA；主机名校验仍开启 | 空 |
 | `--probe` / `--once` | 仅元数据心跳（不碰安卓、不领任务）/ 跑一轮 | 验收时用 |
 
-> **新装必配（合入等点头）：** 当前 `mac/outputs/trigger_launch.py` 把 `--server` 与 `--worker-id` 写死为现网值（对照见第 11 章，`EXAMPLE_LIVE_ONLY`）。新装必须改成自己的 gateway 与 worker-id，**不要把现网值当默认，也不要提交回仓库**。参数化在 [GitHub #4](https://github.com/a192289394-oss/kaituan-seckill/pull/4)（原 PR-3），**合入等点头**（现网 Mac 先写好本地 `launch.json` 再合）。本 PR 不改该脚本。参数化后的目标接口：
+> **新装必配（合入等 Mac 回归书面确认）：** 当前 `mac/outputs/trigger_launch.py` 把 `--server` 与 `--worker-id` 写死为现网值（对照见第 11 章，`EXAMPLE_LIVE_ONLY`）。新装必须改成自己的 gateway 与 worker-id，**不要把现网值当默认，也不要提交回仓库**。参数化在 [GitHub #4](https://github.com/a192289394-oss/kaituan-seckill/pull/4)（原 PR-3），**合入等 Mac 回归书面确认**（现网 Mac 先写好本地 `launch.json`）。本 PR 不改该脚本。参数化后的目标接口：
 
 ```sh
 # 目标（PR 落地后）：环境变量或旁路 json，二选一
@@ -483,7 +483,7 @@ chmod 0600 work/trigger-worker/credentials.json
 
 ### 7.4 指向自己的 gateway 与 worker-id
 
-> **新装必配。** 参数化合入见 [GitHub #4](https://github.com/a192289394-oss/kaituan-seckill/pull/4)（原 PR-3），**合入等点头**。本 PR 不改 `trigger_launch.py`。
+> **新装必配。** 参数化合入见 [GitHub #4](https://github.com/a192289394-oss/kaituan-seckill/pull/4)（原 PR-3），**合入等 Mac 回归书面确认**。本 PR 不改 `trigger_launch.py`。
 
 合入前（本机临时修改，不提交）：把 `outputs/trigger_launch.py` 中 `'--server','…'` 改为你的入口（本地 `http://127.0.0.1:8792` 或 `https://gateway.example.com/kaituan`），`'--worker-id','…'` 改为 `'mac-worker-1'`。不要保留附录里的 `EXAMPLE_LIVE_ONLY` 值。
 合入后：用 5.6 节的 `KAITUAN_SERVER` / `KAITUAN_WORKER_ID` 或 `work/trigger-worker/launch.json`。
@@ -598,7 +598,7 @@ tail -n 50 work/trigger-worker/stderr.log
 | worker-id | `zhongjiawei-mac-native` | `mac-worker-1` |
 | 登录 | nginx `auth_request` + site-entry；操作员路径 nginx 写死 `Authorization: Bearer <USER_TOKEN>`；worker 路径 `auth_request off` 透传 | 默认独立登录（第 6.6 节） |
 | 部署脚本 | `mac/work/trigger-deploy/deploy_gateway.py`（写死 IP、nginx Bearer 注入、portal 卡片） | 本文第 6 章手工/脚本化步骤 |
-| Mac 启动器 | `EXAMPLE_LIVE_ONLY`：`trigger_launch.py` 写死 `--server https://1.12.208.101/kaituan --worker-id zhongjiawei-mac-native`。新装必配自己的值。参数化在 GitHub #4，合入等点头；本 PR 不改该脚本 | 5.6 节 |
+| Mac 启动器 | `EXAMPLE_LIVE_ONLY`：`trigger_launch.py` 写死 `--server https://1.12.208.101/kaituan --worker-id zhongjiawei-mac-native`。新装必配自己的值。参数化在 GitHub #4，合入等 Mac 回归书面确认；本 PR 不改该脚本 | 5.6 节 |
 
 ---
 

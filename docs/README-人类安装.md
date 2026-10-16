@@ -1,4 +1,4 @@
-> **交付说明：** 交付的是**链路与 API（协议与执行能力）**，不是现网皮。ALIGN 拷皮挂起。口径以 **[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)** 为准。不宣称「装完 = 现网能力」或「装完 = 现网皮」。
+> **交付说明：** 交付的是**链路与 API（协议与执行能力：queue / claim / gate / report、来客执行、API 回执）**，不是现网皮。ALIGN 拷皮挂起，不是合并必做。口径以 **[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)** 为准。不宣称「装完 = 现网能力」或「装完 = 现网皮」。
 
 # 开团 / 秒杀自动化 · 一页安装说明（给人看的）
 
@@ -8,7 +8,7 @@
 
 ## 它是干什么的
 
-**API 或自写前端下单 → Mac 模拟器来客执行（开团路径会用到销帮）→ API 读回执。**
+**API 或自写前端下单 → Mac 来客（开团路径会用到销帮）执行 → API 读回执。**
 
 你用自己的页面或脚本向网关下单。你的 Mac 把单子领走，在模拟器里的「来客」里执行；开团路径还会用到「销帮」。做完用 API 读状态和审计回执。页面长得像不像现网工作台，**不算**装好。
 
@@ -52,7 +52,7 @@
 2. **装网关**：按 [AI-INSTALL.md](AI-INSTALL.md) 第 6 章。本机联调可只听 `127.0.0.1:8792`；要远程再用 nginx。默认用网关自己的登录接口，不必接别的网站登录。
 3. **用 API 试登录**：按第 6 章的 curl 示例（假 token）确认能拿到 `gateway_session`。仓内静态页若打开了，只当调试壳，不拿它的样子当验收。
 4. **装 Mac 的模拟器**：按 [install-mac-android-runtime.md](install-mac-android-runtime.md)：模拟器 → adb → root → Frida（挂钩/注入）→ 装来客和销帮 → **两边都手动登录**。
-5. **装 Mac 干活程序**：按 [AI-INSTALL.md](AI-INSTALL.md) 第 7 章。凭证权限 0600。服务器地址和 worker 名字要和网关一致（示例 `https://你的域名/kaituan` 与 `mac-worker-1`）。启动器里写死的现网地址是样板，新装必须改成自己的；参数化合入等点头（GitHub #4），本说明不改那份代码。若有酒店目录种子，放到 `work/trigger-worker/catalog.sqlite3`；没有也能启动，目录为空。
+5. **装 Mac 干活程序**：按 [AI-INSTALL.md](AI-INSTALL.md) 第 7 章。凭证权限 0600。服务器地址和 worker 名字要和网关一致（示例 `https://你的域名/kaituan` 与 `mac-worker-1`）。启动器里写死的现网地址是样板，新装必须改成自己的；参数化合入等 Mac 回归书面确认（GitHub #4），本说明不改那份代码。若有酒店目录种子，放到 `work/trigger-worker/catalog.sqlite3`；没有也能启动，目录为空。
 6. **先试连接，再常驻**：先跑 `probe`，用 `GET /api/status` 看到 Mac 在线；再跑 `install` 让它开机自动运行。在线还不等于能写。
 
 ## 怎么算“链路通了”

@@ -1,8 +1,10 @@
-> **交付说明：** 交付的是**链路与 API（协议与执行能力）**，不是现网皮。ALIGN 拷皮挂起。口径以 **[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)** 为准。不宣称「装完 = 现网能力」或「装完 = 现网皮」。
+> **交付说明：** 交付的是**链路与 API（协议与执行能力：queue / claim / gate / report、来客执行、API 回执）**，不是现网皮。ALIGN 拷皮挂起，不是合并必做。口径以 **[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)** 为准。不宣称「装完 = 现网能力」或「装完 = 现网皮」。
 
 # 开团与秒杀（kaituan-seckill）
 
-**API 或自写前端下单 → Mac 模拟器来客执行（开团路径会用到销帮）→ API 读回执。**
+**API 或自写前端下单 → Mac 来客（开团路径会用到销帮）执行 → API 读回执。**
+
+主执行是来客 `com.bytedance.ls.merchant`。开团路径会用到销帮 `com.bytedance.lifeservice.crm`。
 
 目的：让**别的 Mac**跑通这条链路。主交付 = 说明文档 + 可运行源码 + 标准接口（对方自写前端）。一套 = **1 个 gateway + 1 个 Mac worker**。要互不影响的第二套，就再装一套。
 
