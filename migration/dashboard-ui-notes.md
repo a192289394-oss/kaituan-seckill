@@ -1,3 +1,5 @@
+> **历史材料，不是产品安装路径。** 新装一套请看 [`docs/AI-INSTALL.md`](../docs/AI-INSTALL.md)。下文里的主机、域名、worker 名都是当时记录（`EXAMPLE_LIVE_ONLY`），禁止当作新装默认值。
+
 # dashboard.keyframe-gz.com UI 设计要点（迁入开团/秒杀用）
 
 来源：2026-10-16 只读观察，已登录经营总览。
