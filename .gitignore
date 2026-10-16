@@ -1,0 +1,13 @@
+# secrets & local runtime
+**/.env
+**/gateway.env
+**/credentials.json
+**/credentials.json.bak*
+**/private/
+**/state/
+**/*.sqlite3
+**/*.sqlite3.bak*
+**/__pycache__/
+**/*.pyc
+**/*.bak-*
+.DS_Store

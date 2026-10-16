@@ -1,0 +1,339 @@
+{
+  "status": "already_authorized_verified_twice",
+  "new_activity_created": false,
+  "verified_at": 1790154648.002409,
+  "accounts": [
+    {
+      "account": "x244083102",
+      "nickname": "橙意",
+      "activity_id": "7661420127652513842",
+      "activity_name": "7-9月",
+      "end_time": 1790697599,
+      "sku_count": 14,
+      "min_remaining": 999,
+      "prices_match_source": true,
+      "coverage": {
+        "1871847066104887": {
+          "price": 61800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1871847865315338": {
+          "price": 76800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1871848257448963": {
+          "price": 76800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1871848643367944": {
+          "price": 91800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1870047950401545": {
+          "price": 10800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1870046615797779": {
+          "price": 21800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1870294719332352": {
+          "price": 79900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1861986805470249": {
+          "price": 64900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1861996939335732": {
+          "price": 59900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1861997952640007": {
+          "price": 109900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1862001190478907": {
+          "price": 79900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1862001822665755": {
+          "price": 139900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1862002181359639": {
+          "price": 84900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1862003134531587": {
+          "price": 149900,
+          "stock": 999,
+          "remaining": 999
+        }
+      }
+    },
+    {
+      "account": "jin24946",
+      "nickname": "广东小导游静静",
+      "activity_id": "7661420127652497458",
+      "activity_name": "7-9月",
+      "end_time": 1790697599,
+      "sku_count": 14,
+      "min_remaining": 991,
+      "prices_match_source": true,
+      "coverage": {
+        "1871847066104887": {
+          "price": 61800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1871847865315338": {
+          "price": 76800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1871848257448963": {
+          "price": 76800,
+          "stock": 999,
+          "remaining": 998
+        },
+        "1871848643367944": {
+          "price": 91800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1870046615797779": {
+          "price": 21800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1870047950401545": {
+          "price": 10800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1870294719332352": {
+          "price": 79900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1861986805470249": {
+          "price": 64900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1861996939335732": {
+          "price": 59900,
+          "stock": 999,
+          "remaining": 991
+        },
+        "1861997952640007": {
+          "price": 109900,
+          "stock": 999,
+          "remaining": 992
+        },
+        "1862001190478907": {
+          "price": 79900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1862001822665755": {
+          "price": 139900,
+          "stock": 999,
+          "remaining": 996
+        },
+        "1862002181359639": {
+          "price": 84900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1862003134531587": {
+          "price": 149900,
+          "stock": 999,
+          "remaining": 999
+        }
+      }
+    },
+    {
+      "account": "139648217",
+      "nickname": "琳琳好物分享",
+      "activity_id": "7661420127652497458",
+      "activity_name": "7-9月",
+      "end_time": 1790697599,
+      "sku_count": 14,
+      "min_remaining": 925,
+      "prices_match_source": true,
+      "coverage": {
+        "1871847066104887": {
+          "price": 61800,
+          "stock": 999,
+          "remaining": 996
+        },
+        "1871847865315338": {
+          "price": 76800,
+          "stock": 999,
+          "remaining": 998
+        },
+        "1871848257448963": {
+          "price": 76800,
+          "stock": 999,
+          "remaining": 994
+        },
+        "1871848643367944": {
+          "price": 91800,
+          "stock": 999,
+          "remaining": 998
+        },
+        "1870046615797779": {
+          "price": 21800,
+          "stock": 999,
+          "remaining": 991
+        },
+        "1870047950401545": {
+          "price": 10800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1870294719332352": {
+          "price": 79900,
+          "stock": 999,
+          "remaining": 998
+        },
+        "1861986805470249": {
+          "price": 64900,
+          "stock": 999,
+          "remaining": 996
+        },
+        "1861996939335732": {
+          "price": 59900,
+          "stock": 999,
+          "remaining": 925
+        },
+        "1861997952640007": {
+          "price": 109900,
+          "stock": 999,
+          "remaining": 956
+        },
+        "1862001190478907": {
+          "price": 79900,
+          "stock": 999,
+          "remaining": 995
+        },
+        "1862001822665755": {
+          "price": 139900,
+          "stock": 999,
+          "remaining": 993
+        },
+        "1862002181359639": {
+          "price": 84900,
+          "stock": 999,
+          "remaining": 985
+        },
+        "1862003134531587": {
+          "price": 149900,
+          "stock": 999,
+          "remaining": 991
+        }
+      }
+    },
+    {
+      "account": "24377796545",
+      "nickname": "小静儿爱旅行",
+      "activity_id": "7661420127652497458",
+      "activity_name": "7-9月",
+      "end_time": 1790697599,
+      "sku_count": 14,
+      "min_remaining": 997,
+      "prices_match_source": true,
+      "coverage": {
+        "1871847066104887": {
+          "price": 61800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1871847865315338": {
+          "price": 76800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1871848257448963": {
+          "price": 76800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1871848643367944": {
+          "price": 91800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1870046615797779": {
+          "price": 21800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1870047950401545": {
+          "price": 10800,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1870294719332352": {
+          "price": 79900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1861986805470249": {
+          "price": 64900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1861996939335732": {
+          "price": 59900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1861997952640007": {
+          "price": 109900,
+          "stock": 999,
+          "remaining": 997
+        },
+        "1862001190478907": {
+          "price": 79900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1862001822665755": {
+          "price": 139900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1862002181359639": {
+          "price": 84900,
+          "stock": 999,
+          "remaining": 999
+        },
+        "1862003134531587": {
+          "price": 149900,
+          "stock": 999,
+          "remaining": 999
+        }
+      }
+    }
+  ],
+  "notification": {
+    "outbox_id": "e1e89e66-0aac-520d-a5ec-6ce79b676a98",
+    "delivered": true
+  }
+}

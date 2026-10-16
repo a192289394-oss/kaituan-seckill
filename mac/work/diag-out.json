@@ -1,0 +1,506 @@
+{
+ "广州永庆坊黄沙地铁站岚语酒店": [
+  {
+   "activity_id": "7694578234016614409",
+   "name": "1009岚语",
+   "start": 1791475200,
+   "end": 1796054399,
+   "anchors": [
+    "41840054641",
+    "qtw18923239785",
+    "zl3326760688",
+    "692058731",
+    "51869035569",
+    "50749840482",
+    "35085381687X",
+    "202293395",
+    "20209988M",
+    "87305088084",
+    "dyojfwa6fige"
+   ],
+   "spec": {
+    "1876380976059428": {
+     "sku_id": "1876380976059428",
+     "price": 12800,
+     "stock": 2000
+    },
+    "1876381530464263": {
+     "sku_id": "1876381530464263",
+     "price": 22900,
+     "stock": 2000
+    },
+    "1876383207725079": {
+     "sku_id": "1876383207725079",
+     "price": 14800,
+     "stock": 2000
+    },
+    "1876382830808148": {
+     "sku_id": "1876382830808148",
+     "price": 26900,
+     "stock": 2000
+    }
+   },
+   "skus": [
+    {
+     "product_id": 1876380976059428,
+     "name": "【永庆坊店】晓岚大床房2天1晚|游广州必囤+近永庆坊沙面公园+黄沙地铁站",
+     "total_quantity": 22000,
+     "left": 21989
+    },
+    {
+     "product_id": 1876381530464263,
+     "name": "【永庆坊店】晓岚大床房3天2晚|游广州必囤+近永庆坊沙面公园+黄沙地铁站",
+     "total_quantity": 22000,
+     "left": 21981
+    },
+    {
+     "product_id": 1876383207725079,
+     "name": "【永庆坊店】沐岚大床房/观岚大床房2天1晚|游广州必囤+近永庆坊沙面公园+黄沙地铁站",
+     "total_quantity": 22000,
+     "left": 21998
+    },
+    {
+     "product_id": 1876382830808148,
+     "name": "【永庆坊店】沐岚大床房/观岚大床房3天2晚|游广州必囤+近永庆坊沙面公园+黄沙地铁站",
+     "total_quantity": 22000,
+     "left": 21995
+    }
+   ],
+   "changed_between_reads": [
+    ".anchor_info_list[0].avatar.url_list[0]",
+    ".anchor_info_list[0].avatar.url_list[1]",
+    ".anchor_info_list[0].avatar.url_list[2]",
+    ".anchor_info_list[1].avatar.url_list[0]",
+    ".anchor_info_list[1].avatar.url_list[1]",
+    ".anchor_info_list[1].avatar.url_list[2]",
+    ".anchor_info_list[2].avatar.url_list[2]",
+    ".anchor_info_list[3].avatar.url_list[0]",
+    ".anchor_info_list[3].avatar.url_list[1]",
+    ".anchor_info_list[3].avatar.url_list[2]",
+    ".anchor_info_list[4].avatar.url_list[0]",
+    ".anchor_info_list[4].avatar.url_list[1]",
+    ".anchor_info_list[4].avatar.url_list[2]",
+    ".anchor_info_list[5].avatar.url_list[0]",
+    ".anchor_info_list[5].avatar.url_list[2]",
+    ".anchor_info_list[6].avatar.url_list[0]",
+    ".anchor_info_list[6].avatar.url_list[1]",
+    ".anchor_info_list[6].avatar.url_list[2]",
+    ".anchor_info_list[7].avatar.url_list[0]",
+    ".anchor_info_list[7].avatar.url_list[1]",
+    ".anchor_info_list[7].avatar.url_list[2]",
+    ".anchor_info_list[8].avatar.url_list[0]",
+    ".anchor_info_list[8].avatar.url_list[1]",
+    ".anchor_info_list[8].avatar.url_list[2]",
+    ".anchor_info_list[9].avatar.url_list[0]",
+    ".anchor_info_list[9].avatar.url_list[1]",
+    ".anchor_info_list[9].avatar.url_list[2]",
+    ".anchor_info_list[10].avatar.url_list[0]",
+    ".anchor_info_list[10].avatar.url_list[1]",
+    ".sku_list[0].product_info.image_list[0]"
+   ]
+  },
+  {
+   "activity_id": "7686792977607444503",
+   "name": "20260918岚语",
+   "start": 1789660800,
+   "end": 1796054399,
+   "anchors": [
+    "Uintrip",
+    "24377796545",
+    "46561596340",
+    "1384260966",
+    "1792920955",
+    "xiaobabyyy1",
+    "56079620034",
+    "33257902932",
+    "psxd520",
+    "65528492878",
+    "87548897wy",
+    "L.n9207",
+    "50809525475",
+    "tiantian888baofu",
+    "Sandy_snady",
+    "0202BABA",
+    "86345070415",
+    "Cxy2777",
+    "55446006811",
+    "D730387689",
+    "Dstravel",
+    "93039208842",
+    "qian314888",
+    "361144258",
+    "83791027884",
+    "Huiji2140351314",
+    "57050492404",
+    "A168345",
+    "14134mf",
+    "44037573490",
+    "zizi5251",
+    "ZQ199012",
+    "76966831999",
+    "lizhzh1216",
+    "83764045749",
+    "62616276347",
+    "34271547414",
+    "Candylai2021"
+   ],
+   "spec": {
+    "1876380976059428": {
+     "sku_id": "1876380976059428",
+     "price": 12800,
+     "stock": 2000
+    },
+    "1876381530464263": {
+     "sku_id": "1876381530464263",
+     "price": 22900,
+     "stock": 2000
+    },
+    "1876383207725079": {
+     "sku_id": "1876383207725079",
+     "price": 14800,
+     "stock": 2000
+    },
+    "1876382830808148": {
+     "sku_id": "1876382830808148",
+     "price": 26900,
+     "stock": 2000
+    }
+   },
+   "skus": [
+    {
+     "product_id": 1876380976059428,
+     "name": "【永庆坊店】晓岚大床房2天1晚|游广州必囤+近永庆坊沙面公园+黄沙地铁站",
+     "total_quantity": 76000,
+     "left": 75990
+    },
+    {
+     "product_id": 1876381530464263,
+     "name": "【永庆坊店】晓岚大床房3天2晚|游广州必囤+近永庆坊沙面公园+黄沙地铁站",
+     "total_quantity": 76000,
+     "left": 73909
+    },
+    {
+     "product_id": 1876383207725079,
+     "name": "【永庆坊店】沐岚大床房/观岚大床房2天1晚|游广州必囤+近永庆坊沙面公园+黄沙地铁站",
+     "total_quantity": 76000,
+     "left": 75998
+    },
+    {
+     "product_id": 1876382830808148,
+     "name": "【永庆坊店】沐岚大床房/观岚大床房3天2晚|游广州必囤+近永庆坊沙面公园+黄沙地铁站",
+     "total_quantity": 76000,
+     "left": 75970
+    }
+   ],
+   "changed_between_reads": [
+    ".anchor_info_list[0].avatar.url_list[2]",
+    ".anchor_info_list[1].avatar.url_list[0]",
+    ".anchor_info_list[1].avatar.url_list[1]",
+    ".anchor_info_list[1].avatar.url_list[2]",
+    ".anchor_info_list[2].avatar.url_list[0]",
+    ".anchor_info_list[2].avatar.url_list[1]",
+    ".anchor_info_list[2].avatar.url_list[2]",
+    ".anchor_info_list[3].avatar.url_list[0]",
+    ".anchor_info_list[3].avatar.url_list[1]",
+    ".anchor_info_list[3].avatar.url_list[2]",
+    ".anchor_info_list[4].avatar.url_list[0]",
+    ".anchor_info_list[4].avatar.url_list[1]",
+    ".anchor_info_list[4].avatar.url_list[2]",
+    ".anchor_info_list[5].avatar.url_list[1]",
+    ".anchor_info_list[6].avatar.url_list[0]",
+    ".anchor_info_list[6].avatar.url_list[1]",
+    ".anchor_info_list[6].avatar.url_list[2]",
+    ".anchor_info_list[7].avatar.url_list[1]",
+    ".anchor_info_list[7].avatar.url_list[2]",
+    ".anchor_info_list[8].avatar.url_list[1]",
+    ".anchor_info_list[8].avatar.url_list[2]",
+    ".anchor_info_list[9].avatar.url_list[0]",
+    ".anchor_info_list[9].avatar.url_list[1]",
+    ".anchor_info_list[9].avatar.url_list[2]",
+    ".anchor_info_list[10].avatar.url_list[0]",
+    ".anchor_info_list[10].avatar.url_list[2]",
+    ".anchor_info_list[11].avatar.url_list[0]",
+    ".anchor_info_list[11].avatar.url_list[1]",
+    ".anchor_info_list[11].avatar.url_list[2]",
+    ".anchor_info_list[13].avatar.url_list[0]"
+   ]
+  }
+ ],
+ "愉舍酒店(广州北京路天字码头店)": [
+  {
+   "activity_id": "7696403522002405376",
+   "name": "1014直播秒杀",
+   "start": 1791907200,
+   "end": 1798732799,
+   "anchors": [
+    "qtw18923239785",
+    "zl3326760688",
+    "50749840482",
+    "Candylai2021",
+    "76966831999",
+    "lw50147507184",
+    "Allan68020",
+    "1232680888",
+    "2007010667",
+    "zh337123",
+    "12345678999hao",
+    "520025520025hm",
+    "20250919hhh",
+    "61759417352",
+    "Gdci",
+    "tzc20090409",
+    "62616276347",
+    "jiayin72543",
+    "ydd211213"
+   ],
+   "spec": {
+    "1876286703186999": {
+     "sku_id": "1876286703186999",
+     "price": 23800,
+     "stock": 2000
+    },
+    "1875753239433260": {
+     "sku_id": "1875753239433260",
+     "price": 16900,
+     "stock": 2000
+    },
+    "1875749002279948": {
+     "sku_id": "1875749002279948",
+     "price": 11900,
+     "stock": 2000
+    },
+    "1875752735055879": {
+     "sku_id": "1875752735055879",
+     "price": 13900,
+     "stock": 2000
+    },
+    "1876286986178618": {
+     "sku_id": "1876286986178618",
+     "price": 19900,
+     "stock": 2000
+    },
+    "1876286734201915": {
+     "sku_id": "1876286734201915",
+     "price": 31800,
+     "stock": 2000
+    }
+   },
+   "skus": [
+    {
+     "product_id": 1876286703186999,
+     "name": "【天字码头店】愉悦大床房/云悦双床房3天2晚+双人自助早餐",
+     "total_quantity": 38000,
+     "left": 37995
+    },
+    {
+     "product_id": 1875753239433260,
+     "name": "【天字码头店】愉享大床房/云享双床房2天1晚+双人自助早餐",
+     "total_quantity": 38000,
+     "left": 37998
+    },
+    {
+     "product_id": 1875749002279948,
+     "name": "【天字码头店】（特惠）愉安大床房2天1晚+双人自助早餐",
+     "total_quantity": 38000,
+     "left": 37992
+    },
+    {
+     "product_id": 1875752735055879,
+     "name": "【天字码头店】愉悦大床房/云悦双床房2天1晚+双人自助早餐",
+     "total_quantity": 38000,
+     "left": 37998
+    },
+    {
+     "product_id": 1876286986178618,
+     "name": "【天字码头店】（特惠）愉安大床房3天2晚+双人自助早餐",
+     "total_quantity": 38000,
+     "left": 37976
+    },
+    {
+     "product_id": 1876286734201915,
+     "name": "【天字码头店】愉享大床房/云享双床房3天2晚+双人自助早餐",
+     "total_quantity": 38000,
+     "left": 37992
+    }
+   ],
+   "changed_between_reads": [
+    ".anchor_info_list[0].avatar.url_list[1]",
+    ".anchor_info_list[0].avatar.url_list[2]",
+    ".anchor_info_list[1].avatar.url_list[0]",
+    ".anchor_info_list[1].avatar.url_list[2]",
+    ".anchor_info_list[2].avatar.url_list[0]",
+    ".anchor_info_list[2].avatar.url_list[1]",
+    ".anchor_info_list[2].avatar.url_list[2]",
+    ".anchor_info_list[3].avatar.url_list[1]",
+    ".anchor_info_list[3].avatar.url_list[2]",
+    ".anchor_info_list[4].avatar.url_list[0]",
+    ".anchor_info_list[5].avatar.url_list[1]",
+    ".anchor_info_list[5].avatar.url_list[2]",
+    ".anchor_info_list[6].avatar.url_list[0]",
+    ".anchor_info_list[6].avatar.url_list[1]",
+    ".anchor_info_list[6].avatar.url_list[2]",
+    ".anchor_info_list[7].avatar.url_list[0]",
+    ".anchor_info_list[7].avatar.url_list[1]",
+    ".anchor_info_list[7].avatar.url_list[2]",
+    ".anchor_info_list[8].avatar.url_list[1]",
+    ".anchor_info_list[8].avatar.url_list[2]",
+    ".anchor_info_list[9].avatar.url_list[0]",
+    ".anchor_info_list[9].avatar.url_list[1]",
+    ".anchor_info_list[9].avatar.url_list[2]",
+    ".anchor_info_list[10].avatar.url_list[1]",
+    ".anchor_info_list[10].avatar.url_list[2]",
+    ".anchor_info_list[11].avatar.url_list[1]",
+    ".anchor_info_list[11].avatar.url_list[2]",
+    ".anchor_info_list[12].avatar.url_list[0]",
+    ".anchor_info_list[12].avatar.url_list[1]",
+    ".anchor_info_list[12].avatar.url_list[2]"
+   ]
+  },
+  {
+   "activity_id": "7690781771744053258",
+   "name": "0929直播秒杀",
+   "start": 1790611200,
+   "end": 1793462399,
+   "anchors": [
+    "76378605705",
+    "baiyun2507336",
+    "95110240179",
+    "990754141",
+    "mimi19930301",
+    "97138699816",
+    "Sandy_snady",
+    "35839211618",
+    "571410306",
+    "uhnbc123456",
+    "yigeaibao920",
+    "aj88812888",
+    "38080964949",
+    "Dstravel",
+    "93039208842",
+    "189440392",
+    "24377796545",
+    "202293395",
+    "50809525475",
+    "A168345",
+    "55446006811",
+    "Huiji2140351314",
+    "L.n9207",
+    "361144258",
+    "83791027884",
+    "44037573490",
+    "35085381687X",
+    "29690604217",
+    "86345070415",
+    "0202BABA",
+    "qian314888",
+    "57050492404",
+    "34271547414",
+    "692058731",
+    "xiaobabyyy1",
+    "56079620034"
+   ],
+   "spec": {
+    "1876286703186999": {
+     "sku_id": "1876286703186999",
+     "price": 23800,
+     "stock": 2000
+    },
+    "1875753239433260": {
+     "sku_id": "1875753239433260",
+     "price": 16900,
+     "stock": 2000
+    },
+    "1875749002279948": {
+     "sku_id": "1875749002279948",
+     "price": 11900,
+     "stock": 2000
+    },
+    "1875752735055879": {
+     "sku_id": "1875752735055879",
+     "price": 13900,
+     "stock": 2000
+    },
+    "1876286986178618": {
+     "sku_id": "1876286986178618",
+     "price": 19900,
+     "stock": 2000
+    },
+    "1876286734201915": {
+     "sku_id": "1876286734201915",
+     "price": 31800,
+     "stock": 2000
+    }
+   },
+   "skus": [
+    {
+     "product_id": 1876286703186999,
+     "name": "【天字码头店】愉悦大床房/云悦双床房3天2晚+双人自助早餐",
+     "total_quantity": 72000,
+     "left": 71993
+    },
+    {
+     "product_id": 1875753239433260,
+     "name": "【天字码头店】愉享大床房/云享双床房2天1晚+双人自助早餐",
+     "total_quantity": 72000,
+     "left": 71998
+    },
+    {
+     "product_id": 1875749002279948,
+     "name": "【天字码头店】（特惠）愉安大床房2天1晚+双人自助早餐",
+     "total_quantity": 72000,
+     "left": 71987
+    },
+    {
+     "product_id": 1875752735055879,
+     "name": "【天字码头店】愉悦大床房/云悦双床房2天1晚+双人自助早餐",
+     "total_quantity": 72000,
+     "left": 71995
+    },
+    {
+     "product_id": 1876286986178618,
+     "name": "【天字码头店】（特惠）愉安大床房3天2晚+双人自助早餐",
+     "total_quantity": 72000,
+     "left": 71868
+    },
+    {
+     "product_id": 1876286734201915,
+     "name": "【天字码头店】愉享大床房/云享双床房3天2晚+双人自助早餐",
+     "total_quantity": 72000,
+     "left": 71999
+    }
+   ],
+   "changed_between_reads": [
+    ".anchor_info_list[0].avatar.url_list[0]",
+    ".anchor_info_list[0].avatar.url_list[2]",
+    ".anchor_info_list[1].avatar.url_list[0]",
+    ".anchor_info_list[1].avatar.url_list[1]",
+    ".anchor_info_list[1].avatar.url_list[2]",
+    ".anchor_info_list[2].avatar.url_list[0]",
+    ".anchor_info_list[2].avatar.url_list[1]",
+    ".anchor_info_list[2].avatar.url_list[2]",
+    ".anchor_info_list[3].avatar.url_list[1]",
+    ".anchor_info_list[3].avatar.url_list[2]",
+    ".anchor_info_list[4].avatar.url_list[0]",
+    ".anchor_info_list[4].avatar.url_list[1]",
+    ".anchor_info_list[4].avatar.url_list[2]",
+    ".anchor_info_list[5].avatar.url_list[1]",
+    ".anchor_info_list[5].avatar.url_list[2]",
+    ".anchor_info_list[6].avatar.url_list[0]",
+    ".anchor_info_list[6].avatar.url_list[1]",
+    ".anchor_info_list[6].avatar.url_list[2]",
+    ".anchor_info_list[7].avatar.url_list[0]",
+    ".anchor_info_list[7].avatar.url_list[1]",
+    ".anchor_info_list[8].avatar.url_list[1]",
+    ".anchor_info_list[8].avatar.url_list[2]",
+    ".anchor_info_list[9].avatar.url_list[0]",
+    ".anchor_info_list[9].avatar.url_list[1]",
+    ".anchor_info_list[9].avatar.url_list[2]",
+    ".anchor_info_list[10].avatar.url_list[0]",
+    ".anchor_info_list[11].avatar.url_list[0]",
+    ".anchor_info_list[11].avatar.url_list[1]",
+    ".anchor_info_list[11].avatar.url_list[2]",
+    ".anchor_info_list[12].avatar.url_list[1]"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1344 @@
+[
+  {
+    "case": "control",
+    "kind": "marketing",
+    "requested": "7689003788489967635",
+    "code": 0,
+    "message": "",
+    "keys": [
+      "status_code",
+      "ActivityInfoList",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "collections": {
+      "ActivityInfoList": 0
+    },
+    "evidence": []
+  },
+  {
+    "case": "control",
+    "kind": "audit_log",
+    "requested": "7689003788489967635",
+    "code": 0,
+    "message": "",
+    "keys": [
+      "status_code",
+      "task_audit_log_list",
+      "pagination",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "collections": {
+      "task_audit_log_list": 0
+    },
+    "evidence": []
+  },
+  {
+    "case": "control",
+    "kind": "products",
+    "requested": "7689003788489967635",
+    "code": 0,
+    "message": "",
+    "keys": [
+      "has_more",
+      "status_code",
+      "product_list",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "collections": {
+      "product_list": 6
+    },
+    "evidence": [
+      {
+        "field": ".product_list[0].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[0].product_id",
+        "value": "1869589840474122"
+      },
+      {
+        "field": ".product_list[0].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".product_list[0].shop_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".product_list[0].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".product_list[1].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[1].product_id",
+        "value": "1876815738689536"
+      },
+      {
+        "field": ".product_list[1].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】高级大/高级双任选｜地铁上盖·广州塔·会展中心｜双早+洗衣房健身房"
+      },
+      {
+        "field": ".product_list[1].shop_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".product_list[1].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".product_list[2].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[2].product_id",
+        "value": "1876659271941131"
+      },
+      {
+        "field": ".product_list[2].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】怡悦大/双和和悦双全房型升级通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".product_list[2].shop_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".product_list[2].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".product_list[3].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[3].product_id",
+        "value": "1876654104820778"
+      },
+      {
+        "field": ".product_list[3].product_name",
+        "value": "【国庆】【广交会可用｜双早｜2晚可拆】怡悦大/双和和悦双全房型升级通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".product_list[3].shop_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".product_list[3].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".product_list[4].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[4].product_id",
+        "value": "1876653904491547"
+      },
+      {
+        "field": ".product_list[4].product_name",
+        "value": "【国庆】【广交会可用｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".product_list[4].shop_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".product_list[4].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".product_list[5].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[5].product_id",
+        "value": "1871931610084410"
+      },
+      {
+        "field": ".product_list[5].product_name",
+        "value": "【国庆】【新店大促｜双早｜不可拆分】轻奢尊誉/CEO大床套房双房型任选｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".product_list[5].shop_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".product_list[5].shop_poi_id",
+        "value": "6892525786796918784"
+      }
+    ]
+  },
+  {
+    "case": "control",
+    "kind": "product_shape",
+    "keys": [
+      "shop_num",
+      "origin_price",
+      "actual_price",
+      "commission_rate",
+      "sold_count",
+      "sold_start_time",
+      "sold_end_time",
+      "stock_count",
+      "show_type",
+      "product_id",
+      "product_name",
+      "shop_name",
+      "shop_poi_id",
+      "avatar_url",
+      "status",
+      "micro_app_id",
+      "entry",
+      "tag"
+    ],
+    "has_more": false
+  },
+  {
+    "case": "control",
+    "kind": "goods_details",
+    "code": 0,
+    "message": "",
+    "keys": [
+      "status_code",
+      "product_detail_list",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "evidence": [
+      {
+        "field": ".product_detail_list[0].product_id",
+        "value": "1869589840474122"
+      },
+      {
+        "field": ".product_detail_list[0].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".product_detail_list[1].product_id",
+        "value": "1876815738689536"
+      },
+      {
+        "field": ".product_detail_list[1].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】高级大/高级双任选｜地铁上盖·广州塔·会展中心｜双早+洗衣房健身房"
+      }
+    ]
+  },
+  {
+    "case": "control",
+    "kind": "pois",
+    "requested": "7689003788489967635",
+    "code": 0,
+    "message": "",
+    "keys": [
+      "has_more",
+      "total_count",
+      "status_code",
+      "poi_list",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "collections": {
+      "poi_list": 1
+    },
+    "evidence": [
+      {
+        "field": ".poi_list[0].poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".poi_list[0].poi_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      }
+    ]
+  },
+  {
+    "case": "control",
+    "kind": "detail_v2",
+    "requested": "7689003788489967635",
+    "code": 0,
+    "message": "",
+    "keys": [
+      "status_code",
+      "task_detail",
+      "task_draft_detail",
+      "task_display_status",
+      "tags",
+      "task_action",
+      "task_button_action_info",
+      "action_sub_info",
+      "default_level_version",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "collections": {
+      "task_action": 5
+    },
+    "evidence": [
+      {
+        "field": ".task_detail.task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.merchant_detail.merchant_account_id",
+        "value": "7643703573599160361"
+      },
+      {
+        "field": ".task_detail.merchant_detail.merchant_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".task_detail.data.product_list[0].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_detail.data.product_list[0].product_id",
+        "value": "1869589840474122"
+      },
+      {
+        "field": ".task_detail.data.product_list[0].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[0].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_detail.data.product_list[0].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_detail.data.product_list[1].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_detail.data.product_list[1].product_id",
+        "value": "1876815738689536"
+      },
+      {
+        "field": ".task_detail.data.product_list[1].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】高级大/高级双任选｜地铁上盖·广州塔·会展中心｜双早+洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[1].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_detail.data.product_list[1].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_detail.data.product_list[2].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_detail.data.product_list[2].product_id",
+        "value": "1876659271941131"
+      },
+      {
+        "field": ".task_detail.data.product_list[2].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】怡悦大/双和和悦双全房型升级通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[2].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_detail.data.product_list[2].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_detail.data.product_list[3].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_detail.data.product_list[3].product_id",
+        "value": "1876654104820778"
+      },
+      {
+        "field": ".task_detail.data.product_list[3].product_name",
+        "value": "【国庆】【广交会可用｜双早｜2晚可拆】怡悦大/双和和悦双全房型升级通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[3].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_detail.data.product_list[3].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_detail.data.product_list[4].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_detail.data.product_list[4].product_id",
+        "value": "1876653904491547"
+      },
+      {
+        "field": ".task_detail.data.product_list[4].product_name",
+        "value": "【国庆】【广交会可用｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[4].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_detail.data.product_list[4].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_detail.data.product_list[5].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_detail.data.product_list[5].product_id",
+        "value": "1871931610084410"
+      },
+      {
+        "field": ".task_detail.data.product_list[5].product_name",
+        "value": "【国庆】【新店大促｜双早｜不可拆分】轻奢尊誉/CEO大床套房双房型任选｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[5].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_detail.data.product_list[5].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_detail.data.poi_list[0].poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_detail.data.poi_list[0].poi_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".task_detail.task_order_list[0].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[1].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[2].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[3].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[4].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[5].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[6].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[7].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[8].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[9].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[10].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[11].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[12].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[13].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[14].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[15].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[16].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[17].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[18].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[19].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[20].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[21].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[22].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[23].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[24].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[25].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[26].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[27].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[28].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[29].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[30].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[31].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[32].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[33].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[34].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[35].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[36].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[37].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[38].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[39].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[40].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[41].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[42].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[43].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[44].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[45].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[46].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[47].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[48].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[49].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[50].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[51].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[52].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[53].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[54].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[55].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[56].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[57].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[58].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[59].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[60].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[61].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[62].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[63].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[64].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[65].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[66].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[67].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[68].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[69].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[70].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[71].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[72].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.task_order_list[73].task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_draft_detail.task.task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_draft_detail.task.merchant_detail.merchant_account_id",
+        "value": "7643703573599160361"
+      },
+      {
+        "field": ".task_draft_detail.task.merchant_detail.merchant_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[0].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[0].product_id",
+        "value": "1869589840474122"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[0].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[0].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[0].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[1].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[1].product_id",
+        "value": "1876815738689536"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[1].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】高级大/高级双任选｜地铁上盖·广州塔·会展中心｜双早+洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[1].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[1].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[2].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[2].product_id",
+        "value": "1876659271941131"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[2].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】怡悦大/双和和悦双全房型升级通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[2].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[2].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[3].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[3].product_id",
+        "value": "1876654104820778"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[3].product_name",
+        "value": "【国庆】【广交会可用｜双早｜2晚可拆】怡悦大/双和和悦双全房型升级通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[3].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[3].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[4].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[4].product_id",
+        "value": "1876653904491547"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[4].product_name",
+        "value": "【国庆】【广交会可用｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[4].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[4].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[5].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[5].product_id",
+        "value": "1871931610084410"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[5].product_name",
+        "value": "【国庆】【新店大促｜双早｜不可拆分】轻奢尊誉/CEO大床套房双房型任选｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[5].shop_name",
+        "value": ""
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[5].shop_poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_draft_detail.task.data.poi_list[0].poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_draft_detail.task.data.poi_list[0].poi_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      }
+    ]
+  },
+  {
+    "case": "target",
+    "kind": "marketing",
+    "requested": "7689013682396563495",
+    "code": 0,
+    "message": "",
+    "keys": [
+      "status_code",
+      "ActivityInfoList",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "collections": {
+      "ActivityInfoList": 0
+    },
+    "evidence": []
+  },
+  {
+    "case": "target",
+    "kind": "audit_log",
+    "requested": "7689013682396563495",
+    "code": 0,
+    "message": "",
+    "keys": [
+      "status_code",
+      "task_audit_log_list",
+      "pagination",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "collections": {
+      "task_audit_log_list": 0
+    },
+    "evidence": []
+  },
+  {
+    "case": "target",
+    "kind": "products",
+    "requested": "7689013682396563495",
+    "code": 0,
+    "message": "",
+    "keys": [
+      "has_more",
+      "status_code",
+      "product_list",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "collections": {
+      "product_list": 17
+    },
+    "evidence": [
+      {
+        "field": ".product_list[0].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[0].product_id",
+        "value": "1862435470896156"
+      },
+      {
+        "field": ".product_list[0].product_name",
+        "value": "【错峰特惠】平日单人自助午餐三次卡（周一至周五）"
+      },
+      {
+        "field": ".product_list[0].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[0].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[1].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[1].product_id",
+        "value": "1865246819435559"
+      },
+      {
+        "field": ".product_list[1].product_name",
+        "value": "【周六&周日】单人自助午餐"
+      },
+      {
+        "field": ".product_list[1].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[1].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[2].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[2].product_id",
+        "value": "1862601045897244"
+      },
+      {
+        "field": ".product_list[2].product_name",
+        "value": "【错峰特惠】 平日单人自助晚餐三次卡（周日至周四）"
+      },
+      {
+        "field": ".product_list[2].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[2].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[3].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[3].product_id",
+        "value": "1865247944837145"
+      },
+      {
+        "field": ".product_list[3].product_name",
+        "value": "【周日至周四】双人自助晚餐"
+      },
+      {
+        "field": ".product_list[3].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[3].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[4].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[4].product_id",
+        "value": "1865061161895943"
+      },
+      {
+        "field": ".product_list[4].product_name",
+        "value": "【长者特惠|周五周六】单人自助晚餐（60岁以上成人专享）"
+      },
+      {
+        "field": ".product_list[4].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[4].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[5].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[5].product_id",
+        "value": "1865061016822844"
+      },
+      {
+        "field": ".product_list[5].product_name",
+        "value": "【长者特惠】全周通用单人自助午餐（60岁以上成人专享）"
+      },
+      {
+        "field": ".product_list[5].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[5].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[6].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[6].product_id",
+        "value": "1865247755937804"
+      },
+      {
+        "field": ".product_list[6].product_name",
+        "value": "【周六&周日】双人自助午餐"
+      },
+      {
+        "field": ".product_list[6].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[6].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[7].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[7].product_id",
+        "value": "1865322626175001"
+      },
+      {
+        "field": ".product_list[7].product_name",
+        "value": "【儿童票】全周通用儿童单人自助晚餐（1.2米-1.4米以下）"
+      },
+      {
+        "field": ".product_list[7].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[7].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[8].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[8].product_id",
+        "value": "1865247613038608"
+      },
+      {
+        "field": ".product_list[8].product_name",
+        "value": "【周一至周五】双人自助午餐"
+      },
+      {
+        "field": ".product_list[8].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[8].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[9].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[9].product_id",
+        "value": "1865247246714907"
+      },
+      {
+        "field": ".product_list[9].product_name",
+        "value": "【周日至周四】单人自助晚餐"
+      },
+      {
+        "field": ".product_list[9].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[9].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[10].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[10].product_id",
+        "value": "1865247500634153"
+      },
+      {
+        "field": ".product_list[10].product_name",
+        "value": "【周五&周六】单人自助晚餐"
+      },
+      {
+        "field": ".product_list[10].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[10].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[11].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[11].product_id",
+        "value": "1865246438933564"
+      },
+      {
+        "field": ".product_list[11].product_name",
+        "value": "【周一至周五】单人自助午餐"
+      },
+      {
+        "field": ".product_list[11].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[11].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[12].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[12].product_id",
+        "value": "1865248085046272"
+      },
+      {
+        "field": ".product_list[12].product_name",
+        "value": "【周五&周六】双人自助晚餐"
+      },
+      {
+        "field": ".product_list[12].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[12].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[13].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[13].product_id",
+        "value": "1865322662493191"
+      },
+      {
+        "field": ".product_list[13].product_name",
+        "value": "【儿童票】全周通用儿童单人自助午餐（1.2米-1.4米以下）"
+      },
+      {
+        "field": ".product_list[13].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[13].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[14].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[14].product_id",
+        "value": "1874575932193803"
+      },
+      {
+        "field": ".product_list[14].product_name",
+        "value": "【全周通用】单人自助午餐三次卡"
+      },
+      {
+        "field": ".product_list[14].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[14].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[15].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[15].product_id",
+        "value": "1874576266202123"
+      },
+      {
+        "field": ".product_list[15].product_name",
+        "value": "【全周通用丨中秋国庆可用】 单人自助晚餐三次卡"
+      },
+      {
+        "field": ".product_list[15].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[15].shop_poi_id",
+        "value": "6601129157034248206"
+      },
+      {
+        "field": ".product_list[16].shop_num",
+        "value": 1
+      },
+      {
+        "field": ".product_list[16].product_id",
+        "value": "1873222189814810"
+      },
+      {
+        "field": ".product_list[16].product_name",
+        "value": "【长者特惠|周日至周四】单人自助晚餐（60岁以上成人专享）"
+      },
+      {
+        "field": ".product_list[16].shop_name",
+        "value": "广州圣丰索菲特大酒店"
+      },
+      {
+        "field": ".product_list[16].shop_poi_id",
+        "value": "6601129157034248206"
+      }
+    ]
+  },
+  {
+    "case": "target",
+    "kind": "product_shape",
+    "keys": [
+      "shop_num",
+      "origin_price",
+      "actual_price",
+      "commission_rate",
+      "sold_count",
+      "sold_start_time",
+      "sold_end_time",
+      "stock_count",
+      "show_type",
+      "product_id",
+      "product_name",
+      "shop_name",
+      "shop_poi_id",
+      "avatar_url",
+      "status",
+      "micro_app_id",
+      "entry",
+      "tag"
+    ],
+    "has_more": false
+  },
+  {
+    "case": "target",
+    "kind": "goods_details",
+    "code": 2128000867,
+    "message": "无权限操作",
+    "keys": [
+      "status_code",
+      "product_detail_list",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "evidence": []
+  },
+  {
+    "case": "target",
+    "kind": "pois",
+    "requested": "7689013682396563495",
+    "code": 0,
+    "message": "",
+    "keys": [
+      "has_more",
+      "total_count",
+      "status_code",
+      "poi_list",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "collections": {
+      "poi_list": 0
+    },
+    "evidence": []
+  },
+  {
+    "case": "target",
+    "kind": "detail_v2",
+    "requested": "7689013682396563495",
+    "code": 2128000601,
+    "message": "无权限操作",
+    "keys": [
+      "status_code",
+      "status_msg",
+      "log_id",
+      "now"
+    ],
+    "collections": {},
+    "evidence": []
+  },
+  {
+    "case": "no_task",
+    "kind": "products",
+    "code": 2128000600,
+    "message": "无权限操作",
+    "evidence": []
+  }
+]

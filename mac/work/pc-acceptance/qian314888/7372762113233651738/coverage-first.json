@@ -1,0 +1,102 @@
+{
+  "summary": {
+    "hotel": "美华航空主题酒店",
+    "source": "7688642810035374115",
+    "activity_name": "10-11月【达人】直播秒杀",
+    "status": "already_authorized",
+    "products": 13,
+    "minimum_remaining": 200,
+    "end_time": "2026-10-31T23:59:59",
+    "same_uid": "102174088355"
+  },
+  "verification": {
+    "status": "already_authorized",
+    "coverage": {
+      "qian314888": {
+        "1873196739321913": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 58800,
+          "remaining": 999
+        },
+        "1874371191813148": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 50800,
+          "remaining": 200
+        },
+        "1873223162658874": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 26800,
+          "remaining": 999
+        },
+        "1869483917897788": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 19900,
+          "remaining": 999
+        },
+        "1846128049106953": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 73800,
+          "remaining": 999
+        },
+        "1873194557745164": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 59900,
+          "remaining": 200
+        },
+        "1868964506378300": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 50900,
+          "remaining": 999
+        },
+        "1869038313451559": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 88800,
+          "remaining": 999
+        },
+        "1877001923902524": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 56900,
+          "remaining": 999
+        },
+        "1877000472954932": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 69900,
+          "remaining": 999
+        },
+        "1869029318389771": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 93800,
+          "remaining": 999
+        },
+        "1873222440498200": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 12800,
+          "remaining": 999
+        },
+        "1869028767388731": {
+          "activity_id": "7688642810035374115",
+          "end_time": 1793462399,
+          "price": 96900,
+          "remaining": 999
+        }
+      }
+    },
+    "missing": {
+      "qian314888": []
+    },
+    "conflicts": [],
+    "should_publish": false
+  }
+}

@@ -1,0 +1,198 @@
+[
+  {
+    "case": "control",
+    "requested": "7689003788489967635",
+    "code": 0,
+    "message": "",
+    "merchant_fields": [
+      "merchant_account_id",
+      "merchant_name",
+      "merchant_account_type"
+    ],
+    "merchant_identity": {
+      "merchant_name": "丽呈朗誉酒店(广州塔琶洲会展店)"
+    },
+    "evidence": [
+      {
+        "field": ".task_detail.task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_detail.merchant_detail.merchant_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".task_detail.task_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".task_detail.data.product_list[0].product_id",
+        "value": "1869589840474122"
+      },
+      {
+        "field": ".task_detail.data.product_list[0].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[1].product_id",
+        "value": "1876815738689536"
+      },
+      {
+        "field": ".task_detail.data.product_list[1].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】高级大/高级双任选｜地铁上盖·广州塔·会展中心｜双早+洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[2].product_id",
+        "value": "1876659271941131"
+      },
+      {
+        "field": ".task_detail.data.product_list[2].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】怡悦大/双和和悦双全房型升级通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[3].product_id",
+        "value": "1876654104820778"
+      },
+      {
+        "field": ".task_detail.data.product_list[3].product_name",
+        "value": "【国庆】【广交会可用｜双早｜2晚可拆】怡悦大/双和和悦双全房型升级通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[4].product_id",
+        "value": "1876653904491547"
+      },
+      {
+        "field": ".task_detail.data.product_list[4].product_name",
+        "value": "【国庆】【广交会可用｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.product_list[5].product_id",
+        "value": "1871931610084410"
+      },
+      {
+        "field": ".task_detail.data.product_list[5].product_name",
+        "value": "【国庆】【新店大促｜双早｜不可拆分】轻奢尊誉/CEO大床套房双房型任选｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_detail.data.poi_list[0].poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_detail.data.poi_list[0].poi_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".task_detail.data.requirement.media_type",
+        "value": 2
+      },
+      {
+        "field": ".task_draft_detail.task.task_id",
+        "value": "7689003788489967635"
+      },
+      {
+        "field": ".task_draft_detail.task.merchant_detail.merchant_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".task_draft_detail.task.task_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[0].product_id",
+        "value": "1869589840474122"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[0].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[1].product_id",
+        "value": "1876815738689536"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[1].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】高级大/高级双任选｜地铁上盖·广州塔·会展中心｜双早+洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[2].product_id",
+        "value": "1876659271941131"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[2].product_name",
+        "value": "【国庆】【新店大促｜双早｜2晚可拆】怡悦大/双和和悦双全房型升级通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[3].product_id",
+        "value": "1876654104820778"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[3].product_name",
+        "value": "【国庆】【广交会可用｜双早｜2晚可拆】怡悦大/双和和悦双全房型升级通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[4].product_id",
+        "value": "1876653904491547"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[4].product_name",
+        "value": "【国庆】【广交会可用｜双早｜2晚可拆】轻奢尊誉/奢至CEO大床套房全房型通兑｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[5].product_id",
+        "value": "1871931610084410"
+      },
+      {
+        "field": ".task_draft_detail.task.data.product_list[5].product_name",
+        "value": "【国庆】【新店大促｜双早｜不可拆分】轻奢尊誉/CEO大床套房双房型任选｜地铁上盖·广州塔·会展中心｜洗衣房健身房"
+      },
+      {
+        "field": ".task_draft_detail.task.data.poi_list[0].poi_id",
+        "value": "6892525786796918784"
+      },
+      {
+        "field": ".task_draft_detail.task.data.poi_list[0].poi_name",
+        "value": "丽呈朗誉酒店(广州塔琶洲会展店)"
+      },
+      {
+        "field": ".task_draft_detail.task.data.requirement.media_type",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "case": "target",
+    "requested": "7689013682396563495",
+    "code": 2128000601,
+    "message": "无权限操作",
+    "merchant_fields": [],
+    "merchant_identity": {},
+    "evidence": []
+  },
+  {
+    "case": "target_store_scope",
+    "requested": "7689013682396563495",
+    "code": 2128000601,
+    "message": "无权限操作",
+    "merchant_fields": [],
+    "merchant_identity": {},
+    "evidence": []
+  },
+  {
+    "case": "control_unscoped",
+    "requested": "7689003788489967635",
+    "code": 2128000574,
+    "message": "无权限操作",
+    "merchant_fields": [],
+    "merchant_identity": {},
+    "evidence": []
+  },
+  {
+    "case": "target_unscoped",
+    "requested": "7689013682396563495",
+    "code": 2128000574,
+    "message": "无权限操作",
+    "merchant_fields": [],
+    "merchant_identity": {},
+    "evidence": []
+  }
+]

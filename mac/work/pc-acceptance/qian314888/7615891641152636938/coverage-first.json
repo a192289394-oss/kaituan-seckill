@@ -1,0 +1,48 @@
+{
+  "summary": {
+    "hotel": "依力酒店(广州番禺市桥地铁站店)",
+    "source": "7683098612418725915",
+    "activity_name": "9月新秒杀1",
+    "status": "already_authorized",
+    "products": 4,
+    "minimum_remaining": 1000,
+    "end_time": "2026-10-08T23:59:59",
+    "same_uid": "102174088355"
+  },
+  "verification": {
+    "status": "already_authorized",
+    "coverage": {
+      "qian314888": {
+        "1860624760638491": {
+          "activity_id": "7683098612418725915",
+          "end_time": 1791475199,
+          "price": 59900,
+          "remaining": 1000
+        },
+        "1860098784533564": {
+          "activity_id": "7683098612418725915",
+          "end_time": 1791475199,
+          "price": 14500,
+          "remaining": 1000
+        },
+        "1860099362708524": {
+          "activity_id": "7683098612418725915",
+          "end_time": 1791475199,
+          "price": 15600,
+          "remaining": 1000
+        },
+        "1860099766710304": {
+          "activity_id": "7683098612418725915",
+          "end_time": 1791475199,
+          "price": 30800,
+          "remaining": 1000
+        }
+      }
+    },
+    "missing": {
+      "qian314888": []
+    },
+    "conflicts": [],
+    "should_publish": false
+  }
+}

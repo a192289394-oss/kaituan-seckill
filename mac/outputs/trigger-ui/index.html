@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>开团与秒杀 · 周可暖工作台</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('zkn-theme')==='dark'?'dark':'light'}catch(_){}</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="brand"><a class="back" href="/" aria-label="返回工作台"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>工作台</a><span class="divider" aria-hidden="true"></span><h1>开团与秒杀</h1></div><div class="topbar-actions"><button id="guide-open" class="icon-button secondary" type="button" aria-haspopup="dialog" aria-controls="guide-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v7m0-10.5v.5"/></svg><span>使用说明</span></button><button id="theme-toggle" class="icon-button secondary" type="button" aria-label="切换到深色模式"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 13A8.5 8.5 0 0 1 11 3.6 8.5 8.5 0 1 0 20.4 13Z"/></svg><span>深色模式</span></button></div></header>
+<main>
+<section class="connection-strip" aria-labelledby="connection-heading"><div class="connection-title"><span id="connection-dot" class="status-dot pending" aria-hidden="true"></span><strong id="connection-heading">正在读取收单状态</strong><span id="connection" class="badge neutral">读取中</span></div><details class="runtime-details"><summary>运行环境详情</summary><p id="connection-detail">正在分别读取 Mac 收单、Android、root、来客 App 与原生接口状态。</p><ul id="runtime-health" class="runtime-health" aria-label="运行环境状态"><li><span>Android</span><strong class="badge neutral">待读取</strong></li><li><span>root</span><strong class="badge neutral">待读取</strong></li><li><span>来客 App</span><strong class="badge neutral">待读取</strong></li><li><span>原生接口</span><strong class="badge neutral">待读取</strong></li></ul><span id="last-updated" class="meta"></span></details></section>
+<section id="login" class="login-panel" hidden aria-labelledby="login-heading"><div><h2 id="login-heading">连接任务入口</h2><p class="muted">访问验证已失效，暂时无法读取或提交任务。输入访问凭证后继续。</p></div><form id="login-form"><label for="token">访问凭证</label><div class="login-controls"><input id="token" name="token" type="password" autocomplete="current-password" required placeholder="输入访问凭证"><button type="submit">连接</button></div><p id="login-result" role="status" aria-live="polite"></p></form></section>
+<div id="error" class="notice error" role="alert" hidden></div>
+<div class="layout">
+<section class="composer" aria-labelledby="composer-heading"><h2 id="composer-heading">新建任务</h2><p class="muted intro">开团：粘贴来客计划链接后点「提交开团」，自动排队；结果在下方/旁边的「任务进展」看商品与佣金。秒杀：选「秒杀添加」，搜酒店并填抖音号；只往已有活动加号。</p>
+<form id="task-form"><fieldset class="modes"><legend>要处理什么？</legend><div class="mode-options"><label><input type="radio" name="kind" value="plan" checked><span>直播开团</span></label><label><input type="radio" name="kind" value="authorization"><span>秒杀添加</span></label></div></fieldset>
+<div id="plan-fields"><label for="link">开团计划链接</label><textarea id="link" rows="3" placeholder="粘贴来客的计划链接，或计划编号" required></textarea><p class="hint">系统会核对计划所属酒店与商品，避免处理错门店。</p></div>
+<div id="authorization-fields" hidden>
+<p class="ops-tip" role="note">由于秒杀价格直接对外，请自行设置好秒杀活动，这里只在原有活动中进行账号添加，避免出现价格误差。</p>
+<label for="hotel">酒店</label>
+<input id="hotel" type="search" placeholder="搜或直接填酒店全称" autocomplete="off" maxlength="200" list="hotel-datalist" aria-autocomplete="list" aria-controls="hotel-list">
+<div id="hotel-list" class="hotel-list" role="listbox" aria-label="酒店名单" hidden></div>
+<datalist id="hotel-datalist"></datalist>
+<label for="accounts">需要授权的抖音号</label>
+<textarea id="accounts" rows="3" placeholder="粘贴聊天记录也行，系统会自动抽出账号"></textarea>
+<p id="accounts-clean-hint" class="hint">粘贴后会自动清洗：只保留数字/字母账号。多个用空格或换行分开。</p>
+<p class="hint">唯一生效活动会直接加；多个请选择要加入的活动；没有生效活动则拒绝执行，请先到抖音来客自行创建。</p>
+</div>
+<label class="permission" hidden><input id="allow-write" type="checkbox" aria-describedby="permission-note"><span>需要真正加号时再勾选<small id="permission-small">未勾选只做只读核验；勾选后才会为这些抖音号补充秒杀授权</small></span></label><p id="permission-note" class="hint" hidden>正在读取写入环境；此时仍可提交只读核验。</p><button type="submit" id="submit" class="primary full">提交开团<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><p id="form-result" role="status" aria-live="polite"></p></form></section>
+<section class="queue" aria-labelledby="queue-heading"><div class="queue-heading"><div><h2 id="queue-heading">任务进展</h2><p id="queue-summary" class="muted">正在读取最近任务，请稍候。</p></div><button id="refresh" class="secondary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5m-3.1-5a7.5 7.5 0 0 1 12.5-1L20 9M4 15l1.6 3a7.5 7.5 0 0 0 12.5-1"/></svg><span>刷新</span></button></div>
+<div class="queue-toolbar"><div class="filters" role="group" aria-label="任务筛选"><button type="button" data-filter="all" class="selected" aria-pressed="true">全部</button><button type="button" data-filter="attention" aria-pressed="false">需要处理</button><button type="button" data-filter="active" aria-pressed="false">进行中</button><button type="button" data-filter="succeeded" aria-pressed="false">已完成</button></div><label class="search-label" for="task-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="task-search" type="search" placeholder="搜索酒店或抖音号" aria-label="搜索酒店或抖音号"></label></div><div id="tasks" aria-live="polite" aria-busy="true"><div class="empty loading"><span class="spinner" aria-hidden="true"></span><h3>正在读取任务</h3><p>读取完成后，任务进度与下一步会显示在这里。</p></div></div></section>
+</div><footer><span>所有活动时间均为北京时间</span><span>提交后请到下方/旁边的「任务进展」查看处理结果</span></footer>
+</main><div id="guide-panel" class="guide-panel" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="guide-heading">
+<div class="guide-sheet">
+<div class="guide-sheet-head"><h2 id="guide-heading">怎么使用开团与秒杀</h2><button id="guide-close" class="guide-close secondary" type="button" aria-label="关闭使用说明">关闭</button></div>
+<div class="guide-body">
+<section><h3>怎么开团</h3><ol><li>左侧选「直播开团」。</li><li>输入框粘贴来客计划链接。</li><li>点「提交开团」，自动排队。</li><li>到下方/旁边的「任务进展」看有没有完成，以及团长计划内的商品与佣金。</li></ol></section>
+<section><h3>怎么加秒杀</h3><p class="ops-tip" role="note">由于秒杀价格直接对外，请自行设置好秒杀活动，这里只在原有活动中进行账号添加，避免出现价格误差。</p><ol><li>左侧选「秒杀添加」。</li><li>搜索酒店；再填抖音号。</li><li><strong>唯一活动</strong>：直接添加。</li><li><strong>多个生效活动</strong>：请选择要加入的活动（旁边会显示秒杀已有人数，有数据才显示）。</li><li><strong>没有生效活动</strong>：拒绝执行，请自行到抖音来客创建秒杀活动。</li></ol><p class="hint">表单里若仍有「需要真正加号时再勾选」，只在确认要真正加号时勾上即可；引导主流程以「唯一则直接加」为准。</p></section>
+<section><h3>什么时候需要你点一下</h3><p>需要你动手时，徽章会直接写清事项（例如「请选择本店秒杀活动」「本店没有生效中的秒杀，请先去抖音来客创建活动后再来加号」）。点「去处理」按提示操作。排队中、处理中请稍候，不用反复点。</p></section>
+<section><h3>完成后看什么</h3><ul><li>状态「已完成」：开团看商品与佣金；秒杀看活动名、有效期与抖音号。</li><li>状态「没做成」：看卡片上的人话原因，再决定是否重新提交。</li><li>每张卡都有提交时间；完成的会显示完成时间，一眼能回答「做了没、什么时候完成」。</li></ul></section>
+<p class="guide-more"><a href="guide.html" target="_blank" rel="noopener">打开独立说明页</a></p>
+</div></div></div>
+<dialog id="confirm-dialog" aria-labelledby="confirm-title"><form method="dialog"><h2 id="confirm-title"></h2><p id="confirm-description"></p><div class="dialog-actions"><button class="secondary" value="cancel">返回检查</button><button id="confirm-accept" value="confirm">确认</button></div></form></dialog><script>document.getElementById('task-form').addEventListener('submit',function(e){e.preventDefault()})</script><script src="hotels.js" defer></script><script src="app.js" defer></script>
+</body></html>

@@ -1,0 +1,29 @@
+{
+  "status": "link_already_active_hotel_mismatch",
+  "submitted": false,
+  "plan_id": "7688630231984637999",
+  "expected_hotel": "丽怡酒店(广州番禺长隆动物园北门大石地铁站店)",
+  "actual_hotel": "COUnTRY丽怡酒店(广州万博长隆旅游度假区店)",
+  "plan_state": "进行中（CPS直播）",
+  "independent_reviews": [
+    {
+      "run_id": "efef104a-fc1d-44bc-a817-b80f781fe885",
+      "attempt": 2,
+      "hotel": "COUnTRY丽怡酒店(广州万博长隆旅游度假区店)",
+      "state": "succeeded",
+      "reason": "进行中（CPS直播）",
+      "observed_at": 1790222740.1112828
+    },
+    {
+      "run_id": "efef104a-fc1d-44bc-a817-b80f781fe885",
+      "attempt": 1,
+      "hotel": "COUnTRY丽怡酒店(广州万博长隆旅游度假区店)",
+      "state": "succeeded",
+      "reason": "进行中（CPS直播）",
+      "observed_at": 1790222714.42172
+    }
+  ],
+  "checked_at": 1790222740.1140869,
+  "notified": true,
+  "outbox_id": "617cebb8-5700-5bd5-83a9-7c5fc4d1e00b"
+}

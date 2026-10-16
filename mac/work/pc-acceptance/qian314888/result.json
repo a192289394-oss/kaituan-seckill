@@ -1,0 +1,22 @@
+{
+  "status": "already_authorized_verified_twice",
+  "account": "qian314888",
+  "hotels": [
+    {
+      "hotel": "美华航空主题酒店",
+      "products": 13,
+      "minimum_remaining": 200,
+      "end": "2026-10-31 23:59:59"
+    },
+    {
+      "hotel": "依力酒店(广州番禺市桥地铁站店)",
+      "products": 4,
+      "minimum_remaining": 1000,
+      "end": "2026-10-08 23:59:59"
+    }
+  ],
+  "submitted": false,
+  "notified": true,
+  "outbox_id": "e34eb36e-c6cc-53c1-a50f-4a53bb02cc9f",
+  "completed_at": 1790225944.677957
+}

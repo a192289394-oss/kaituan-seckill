@@ -1,0 +1,21 @@
+[Unit]
+Description=Hotel task web gateway
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/uiautomator2-trigger
+EnvironmentFile=/opt/uiautomator2-trigger/gateway.env
+ExecStart=/usr/bin/python3 /opt/uiautomator2-trigger/trigger_gateway.py --bind 127.0.0.1 --port 8792 --db /opt/uiautomator2-trigger/state/queue.sqlite3 --static /opt/uiautomator2-trigger/static
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/uiautomator2-trigger/state
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target

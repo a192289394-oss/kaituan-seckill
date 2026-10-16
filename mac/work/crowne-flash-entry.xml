@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<hierarchy rotation="0">
+  <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.bytedance.ls.merchant" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,84][1080,2400]" drawing-order="0" hint="" display-id="0">
+    <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.bytedance.ls.merchant" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,84][1080,2400]" drawing-order="1" hint="" display-id="0">
+      <node index="0" text="" resource-id="android:id/content" class="android.widget.FrameLayout" package="com.bytedance.ls.merchant" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,84][1080,2400]" drawing-order="1" hint="" display-id="0">
+        <node NAF="true" index="0" text="" resource-id="" class="android.view.ViewGroup" package="com.bytedance.ls.merchant" content-desc="" checkable="false" checked="false" clickable="true" enabled="true" focusable="true" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,84][1080,2400]" drawing-order="1" hint="" display-id="0">
+          <node index="0" text="" resource-id="" class="android.view.ViewGroup" package="com.bytedance.ls.merchant" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,84][1080,2400]" drawing-order="1" hint="" display-id="0" />
+        </node>
+      </node>
+    </node>
+  </node>
+  <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.vivo.upslide" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2358][1080,2400]" drawing-order="0" hint="" display-id="0">
+    <node index="0" text="" resource-id="" class="android.widget.FrameLayout" package="com.vivo.upslide" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2358][1080,2400]" drawing-order="1" hint="" display-id="0">
+      <node index="0" text="" resource-id="" class="android.widget.LinearLayout" package="com.vivo.upslide" content-desc="" checkable="false" checked="false" clickable="false" enabled="true" focusable="false" focused="false" scrollable="false" long-clickable="false" password="false" selected="false" visible-to-user="true" bounds="[0,2358][1080,2400]" drawing-order="1" hint="" display-id="0" />
+    </node>
+  </node>
+</hierarchy>
