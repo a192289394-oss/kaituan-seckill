@@ -1,10 +1,11 @@
 # Mac 安卓执行运行时 · 自助安装清单
 
-> 上级文档：[docs/AI-INSTALL.md](AI-INSTALL.md) §7（Mac 安装）。本文只讲安卓运行时绿场；网关、登录、队列、酒店目录种子以该文 §5.8 / §7 为准。
+> 上级文档：[docs/AI-INSTALL.md](AI-INSTALL.md) §7（Mac 安装）。本文只讲安卓运行时绿场；网关、登录、队列、酒店目录种子以该文 §5.8 / §7 为准。口径以 [GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2) 为准：交付链路与 API，不是现网皮。
 
 日期：2026-10-16  
-对象：任意新环境从零装安卓运行时。绿场勾选通过只说明本机运行时就绪。这是**目标对齐**；**仓↔现网对齐完成前不宣称**装完即具备现网能力。是否对齐以架构师仓↔现网哈希比对与验收（[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)）为准。  
-范围：BlueStacks（Tiramisu64）/ ADB / root / Frida / 来客人工登录与身份核验。  
+对象：任意新环境从零装安卓运行时。绿场勾选通过只说明本机运行时就绪。  
+**硬条件：** adb 连上，且 `su -c id` 含 `uid=0`。BlueStacks、实例名 `Tiramisu64` 只是**推荐示例**，不是必须机型。  
+范围：能 root 的模拟器 / ADB / root / Frida（挂钩/注入工具，用来在模拟器里调用来客原生接口）/ 来客与销帮人工登录。  
 不在本文：搭 gateway、改服务器、发密码；网关地址与 worker token **安装时填自己的**。
 
 仓库：`https://github.com/a192289394-oss/kaituan-seckill`，工作根 `mac/`  
@@ -17,26 +18,28 @@
 - [ ] **一套部署 = 1 个 gateway + 1 台 Mac 上的一个 worker**。不要让两台机器抢同一个 worker 身份。需要另一套互不影响的环境时，按上级文档再装一套，不在本绿场清单里加第二个 worker。
 - [ ] 本清单只装 **模拟器运行时绿场**。网关 / 网页 / 队列在服务器侧另装；本机只做出站领取任务。
 - [ ] **网关 base URL、worker token 安装时自填**（见附录样板）。本文不写死某一台生产机。
-- [ ] 来客登录、商家账号 **只人工完成**；禁止脚本自动登录、自动点「同意」、清数据刷登录。
-- [ ] BlueStacks 大版本更新可能冲掉 root / 系统镜像；更新后必须重新跑本文验收，不能信旧勾选。
+- [ ] 来客与销帮登录 **只人工完成**；禁止脚本自动登录、自动点「同意」、清数据刷登录。
+- [ ] 若用 BlueStacks，大版本更新可能冲掉 root / 系统镜像；更新后必须重新跑 root 验收，不能信旧勾选。
 - [ ] 绿场阶段只做探活与身份只读；**不要**在未完成配置与风控验收前对生产商家做开团/秒杀写入。
 
 建议总顺序：
 
-1. 装 BlueStacks 实例 → 开 ADB → 做 root → 对齐 Frida → 装来客并人工登录  
+1. 装能 root 的模拟器（推荐示例：BlueStacks 实例 `Tiramisu64`）→ 开 ADB → 做 root → 装 Frida（挂钩/注入）→ 装来客和销帮并人工登录  
 2. 拉 `mac/` 代码、建 venv、填自己的网关 URL 与 token（另册可补 worker/LaunchAgent）  
-3. 启动 worker 后，在**你的**网页工作台看探活再放业务  
+3. 启动 worker 后，用 `GET /api/status` 看探活再放业务。调试壳只是可选视图  
 
 ---
 
-## 1. BlueStacks（实例名必须是 Tiramisu64）
+## 1. 模拟器（推荐示例：BlueStacks，实例名 Tiramisu64）
 
-目标：本机有 Android 13 arm64 实例 `Tiramisu64`，能长期开着。
+硬条件不是厂商或实例名。能长期开着、adb 可连、并且后面第 3 节 root 验收通过即可。
+
+下面是**推荐示例**：本机有 Android 13 arm64 实例 `Tiramisu64`。你用别的实例时，把启动参数和 `android_device.instance` 改成实际名字。
 
 - [ ] 安装 BlueStacks（需能创建 **Tiramisu64 / Android 13 / arm64**；历史环境用过 Air `5.21.x`，以你本机可创建的实例为准）。
 - [ ] 安装路径期望：`/Applications/BlueStacks.app`（代码拉起用  
   `/Applications/BlueStacks.app/Contents/MacOS/BlueStacks --instance Tiramisu64`）。
-- [ ] 创建并使用实例名 **`Tiramisu64`**（与 `trigger-worker.json` 里 `android_device.instance` 一致）。
+- [ ] 若走本推荐示例：创建并使用实例名 **`Tiramisu64`**，并与 `trigger-worker.json` 里 `android_device.instance` 一致。别的名字也可以，两边写成同一个。
 - [ ] 关掉会卡死初始化的「有可用更新」之类弹窗（只点「稍后 / 关闭」，不要点「立即更新」挡着桌面）。
 - [ ] 能正常进 Android 桌面。
 
@@ -117,7 +120,9 @@ adb -s 127.0.0.1:5555 shell su -c id
 
 ---
 
-## 4. Frida：本机 Python `16.7.19` ↔ 设备端同名 helper
+## 4. Frida：挂钩/注入工具
+
+Frida 是挂钩/注入工具，用来在模拟器里调用来客原生接口，不是普通安装包。推荐 Mac 侧与设备端 frida-server **同版本**。参考版本 **16.7.19**（与现网常用版本一致时更省事）。版本号不是唯一门槛；验收是能稳定附加到来客并跑通原生调用。版本差太远时先对齐再附加，不要硬启动。
 
 目标：
 
@@ -126,7 +131,7 @@ adb -s 127.0.0.1:5555 shell su -c id
 | Mac Python | `frida==16.7.19`（见 `mac/outputs/requirements.lock.txt`） |
 | 模拟器里 | 二进制固定路径 `/data/local/tmp/kaituan-frida-server` |
 | 监听 | `127.0.0.1:27042`（只本机环回） |
-| 版本 | 设备端 `--version` **必须等于** `16.7.19`（与 `frida.__version__` 对齐） |
+| 版本 | 推荐与 `frida.__version__` 相同。参考 `16.7.19`，不是唯一黑话门槛 |
 
 运行时自愈**只会启动已安装的二进制，不会自动 push/替换**。首次必须人工装好。
 
@@ -139,11 +144,11 @@ pip install 'frida==16.7.19'
 python -c "import frida; print(frida.__version__)"
 ```
 
-- [ ] 打印正好是 `16.7.19`
+- [ ] 打印出版本号，并与设备端 frida-server 相同。推荐参考 `16.7.19`，不是唯一门槛
 
 ### 4.2 设备端二进制（arm64）
 
-- [ ] 下载与 **16.7.19** 匹配的 **android-arm64** `frida-server`（官方 Frida release；架构必须对 Tiramisu64 的 arm64-v8a）。
+- [ ] 下载与 Mac 侧 Frida **同版本**的 **android-arm64** `frida-server`（官方 release；架构要对模拟器的 ABI，推荐示例 Tiramisu64 为 arm64-v8a）。参考文件名带 `16.7.19`。
 - [ ] 推入并命名为 **`kaituan-frida-server`**（名字不要改）：
 
 ```sh
@@ -152,7 +157,7 @@ adb -s 127.0.0.1:5555 shell su -c 'chmod 755 /data/local/tmp/kaituan-frida-serve
 adb -s 127.0.0.1:5555 shell su -c '/data/local/tmp/kaituan-frida-server --version'
 ```
 
-- [ ] `--version` 输出正好是 `16.7.19`（不一致就停，不要硬启动）
+- [ ] `--version` 与 Mac 侧 `frida.__version__` 一致（推荐同为 `16.7.19`）。不一致就先对齐，不要硬启动；这不是「没背出版本号就不能装」
 
 ### 4.3 首次拉起
 
@@ -223,6 +228,17 @@ PY
 - [ ] identity **能读通**（不抛 `NativeAccountUnavailable`）
 - [ ] 当前公司/门店是本部署要用的商家主体（酒店目录种子见 §8，口径与上级文档 §5.8 相同）
 
+### 5.4 销帮（开团路径会用到）
+
+包名：`com.bytedance.lifeservice.crm`。主执行仍是来客。开团导航会进销帮；前置清单里它和来客一样要**人工登录**。本仓不覆盖其他品牌的 CRM。
+
+- [ ] 模拟器里能解析该包（装好即可，版本以能登录为准）。
+- [ ] **人**完成销帮登录。禁止脚本自动登录。
+
+```sh
+adb -s 127.0.0.1:5555 shell cmd package resolve-activity --brief com.bytedance.lifeservice.crm
+```
+
 ---
 
 ## 6. 一页总验收（绿场全绿）
@@ -235,14 +251,16 @@ $ADB connect $S
 $ADB -s $S get-state                          # → device
 $ADB -s $S shell getprop sys.boot_completed   # → 1
 $ADB -s $S shell su -c id                     # → 含 uid=0(root)
-$ADB -s $S shell su -c '/data/local/tmp/kaituan-frida-server --version'  # → 16.7.19
+$ADB -s $S shell su -c '/data/local/tmp/kaituan-frida-server --version'  # 与 Mac 侧相同；推荐 16.7.19
 $ADB -s $S shell "su -c 'pidof kaituan-frida-server'"   # → 单个 PID
 $ADB -s $S shell pidof com.bytedance.ls.merchant        # → 单个 PID
-python -c "import frida; assert frida.__version__=='16.7.19'"
+$ADB -s $S shell cmd package resolve-activity --brief com.bytedance.lifeservice.crm
+python -c "import frida; print(frida.__version__)"      # 与上一行设备端版本相同
 ```
 
-- [ ] 以上全绿  
-- [ ] 来客人工登录完成 + identity 只读通过  
+- [ ] 以上全绿。root 是硬条件；实例名不是
+- [ ] 来客人工登录完成 + identity 只读通过
+- [ ] 销帮已人工登录  
 - [ ] 本部署的网关 URL / worker 身份已按「自己的环境」填好（见附录），未误连别人的队列  
 
 ---
@@ -253,7 +271,7 @@ python -c "import frida; assert frida.__version__=='16.7.19'"
 |---|---|
 | 在本文改服务器 gateway / nginx | 绿场只管执行机运行时 |
 | 在文档里写死生产 IP / 泄露 token | 安装时自填；样板只放附录 |
-| 自动登录来客、清数据刷登录 | 风控 + 丢态 |
+| 自动登录来客或销帮、清数据刷登录 | 风控 + 丢态 |
 | 日常自愈自动 push/覆盖 frida 二进制 | 只启动已装好的；版本错了要人工重装 |
 | 绿场未完成就对生产商家实弹写入 | 先探活与风控清单 |
 
@@ -263,9 +281,10 @@ python -c "import frida; assert frida.__version__=='16.7.19'"
 
 ## 8. 安装时需自备（产品化缺口）
 
-- [ ] 来客 APK：官方渠道，版本以能登录为准（仓库不锁死安装包）。
-- [ ] 商家账号：谁登、登哪个主体，由业务方定；执行侧只验收 identity 可读。
-- [ ] Frida server：从官方 release 拉 **16.7.19 / android-arm64**（仓库通常不打包二进制）。
+- [ ] 来客 APK（`com.bytedance.ls.merchant`）：官方渠道，版本以能登录为准。主执行端。
+- [ ] 销帮 APK（`com.bytedance.lifeservice.crm`）：开团路径会用到，人工登录。
+- [ ] 商家账号：谁登、登哪个主体，由业务方定；执行侧只验收来客 identity 可读。
+- [ ] Frida（挂钩/注入工具，用来在模拟器里调用来客原生接口）：从官方 release 拉与 Mac 侧同版本的 android-arm64 `frida-server`。推荐参考 **16.7.19**。仓库通常不打包二进制。
 - [ ] Root GUI 操作以工具当前 UI 为准；原则是停实例 → 备份 → 打 su → `su -c id`。
 - [ ] **你的**网关 HTTPS 地址、worker token、worker_id：安装时自填，写入本机配置（权限 0600），不要提交进 git。
 - [ ] **酒店目录种子 `catalog.sqlite3`**（上级文档 [AI-INSTALL.md](AI-INSTALL.md) §5.8）：它是酒店目录种子库，表 `merchant_catalog`。worker 启动时只读拷进 `worker.sqlite3` 一次；缺文件则目录为空、不崩溃。仓库内没有从 `merchant-*.json` 生成该 sqlite 的脚本。新装自备同结构的 sqlite（业务导出，或从已有环境拷贝这份种子），放到 `mac/work/trigger-worker/catalog.sqlite3`。**本轮不做** catalog 导入功能。
@@ -288,7 +307,7 @@ https://<你的网关主机>/<你的路径前缀>
 https://1.12.208.101/kaituan
 ```
 
-`android_device` 段（运行时固定项，一般不用改）：
+`android_device` 段（推荐示例，不是强制机型；`instance` 改成你实际的名字）：
 
 ```json
 {
@@ -306,4 +325,4 @@ worker token：放本机 `credentials.json`（或环境变量约定字段），�
 
 ## 附录 B · 一句话
 
-任意新 Mac 绿场 = **Tiramisu64 + adb `127.0.0.1:5555` + `su -c id` 见 uid=0 + 本机/设备 Frida 钉死 16.7.19（路径 `/data/local/tmp/kaituan-frida-server`，监听 `127.0.0.1:27042`）+ 来客人工登录并能读 identity**；网关与 token 安装时填自己的；一套部署一个 worker。
+任意新 Mac 绿场 = **能 root 的模拟器（adb 连上 + `su -c id` 见 uid=0；BlueStacks / `Tiramisu64` 只是推荐示例）+ Frida 挂钩/注入且 Mac 与设备端同版本（推荐 16.7.19，路径 `/data/local/tmp/kaituan-frida-server`，监听 `127.0.0.1:27042`）+ 来客人工登录并能读 identity + 销帮人工登录**；网关与 token 安装时填自己的；一套部署一个 worker。能力看 API 读回，不看皮。

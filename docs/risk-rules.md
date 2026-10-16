@@ -4,7 +4,8 @@
 > 用途：新装环境**默认常开、不可为“先跑通”关闭**；供 S5 上线验收（D 组）直接对照执行  
 > 来源：`migration/风控-迁后验收硬规则清单.md` 的 A/B/C/E（已去掉迁入 dashboard 特有 D、交付汇总 F）  
 > 约束：本轮只文档化与验收化，**不改**业务/风控代码逻辑；语义只能更严、不能放宽  
-> 摘要入口：`docs/AI-INSTALL.md` §9（完整以本文为准）
+> 摘要入口：`docs/AI-INSTALL.md` §9（完整以本文为准）  
+> 交叉引用：链路是否交付，以操作员 API 读回为准（[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)）。不像现网皮不算缺。本文件的风控数字与闸门不因此放宽。下单 `kind`：`plan`=开团，`authorization`=秒杀加号，`inspect`=只读。
 
 编号约定：`R-<节><原号>`，如 `R-A1`。每条末行「如何验证」供 S5 填证据（结论 / 任务 id / 回执截图 / worker 日志行，**token 打码**）。
 
