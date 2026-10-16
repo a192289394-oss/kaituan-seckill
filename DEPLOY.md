@@ -1,18 +1,12 @@
-# 把本仓库换到另一台电脑
+# 把本仓库换到新服务器和新 Mac
 
-本文只做一件事：把**已经在跑的**开团与秒杀，换到另一台电脑上继续维护、继续跑。
+主路径：服务器和 Mac **一起换**。新 Ubuntu 跑网关，新 Mac 跑 BlueStacks / worker。旧机器停干净之后，只有这一套在收单。
 
-不是公开安装文档，也不是每人各装一套生产。现网仍是一台 Ubuntu 网关加一台 Mac 执行机。两台机器同时对同一队列收单会双写。
+文档里的主机写成 `<旧主机>`、`<新主机>`（IP 或域名）。仓库里 `mac/outputs/trigger_launch.py` 目前仍写着换机前的 `https://1.12.208.101/kaituan`，那是旧入口，迁完要改掉，不要再当成默认地址。
 
-迁入经营台域名是另一件事，材料在 [`migration/`](migration/)。
+一台网关加一台 Mac。两台服务器各拿一份队列，或两台 Mac 用同一个 worker-id，都会双写。
 
-现网参考（2026-10-16，以旧机上的真实文件为准）：
-
-| | |
-|---|---|
-| 工作台 | `https://1.12.208.101/kaituan/` |
-| 网关代码 | `/opt/uiautomator2-trigger/` |
-| Mac worker | LaunchAgent `cn.keyframe.web-kaituan`，worker-id `zhongjiawei-mac-native` |
+迁入经营台域名是另一件事，材料在 [`migration/`](migration/)。只换 Mac、服务器不动，见第 10 节。
 
 密钥、token、sqlite 内容不要写入本文，也不要提交回仓库。
 
@@ -20,93 +14,167 @@
 
 ## 1. 适用范围
 
-- 新 Mac 接上**现有**服务器，继续跑现在这一个 worker。
-- 可选：服务器也迁到另一台 Ubuntu。见第 5 节。做完之前，Mac 的 `--server` 不要改。
+- 新服务器 + 新 Mac，继续跑现在这一套开团与秒杀。
+- 入口路径仍是 `/kaituan/`。主机换成新机。
 - 不覆盖：第二台执行机同时在线、把队列并进经营台后端、对外多租户部署。
-
-仓库里各目录：
 
 | 路径 | 是什么 |
 |---|---|
-| `server/` | 服务器网关与静态工作台。现网对应 `/opt/uiautomator2-trigger/`，对外入口 `/kaituan/` |
-| `mac/` | Mac 侧 BlueStacks、执行与 LaunchAgent 相关源码。LaunchAgent 的工作目录是这一层，不是仓库根 |
+| `server/` | 服务器网关与静态工作台。部署到 `/opt/uiautomator2-trigger/`，对外路径 `/kaituan/` |
+| `mac/` | Mac 侧 BlueStacks、执行与 LaunchAgent。工作目录是这一层，不是仓库根 |
 | `migration/` | 迁入经营台 dashboard 的准备材料 |
 | `mac-EXCLUDED.md` | 故意没进仓的大目录（`.venv`、BlueStacks 镜像、android-sdk 等） |
 
 ---
 
-## 2. 前置
+## 2. 迁后必须改的配置
 
-1. GitHub 账号已被仓库 Owner 加为 **Settings → Collaborators**。私有仓，没有权限 `git clone` 会失败。
-2. 新电脑能访问 `github.com/a192289394-oss/kaituan-seckill`。
-3. 旧电脑还在手边，能拷出第 3 节的文件。只 clone、不拷这些文件，新机器起不来。
-4. 换 Mac 时，新机器是 macOS，能装 BlueStacks，并保持不休眠（LaunchAgent 用 `caffeinate -is` 保活，合盖休眠后执行会停）。
+以旧机文件为底稿拷到新机，然后改下面几项。token 可以原样沿用；Host 相关项留着旧值时，新入口会 403、cookie 带不上，或 Mac 仍往旧地址打。
+
+| 配置 | 放在哪 | 迁后 |
+|---|---|---|
+| `GATEWAY_PUBLIC_ORIGIN` | 新机 `/opt/uiautomator2-trigger/gateway.env` | 改成 `https://<新主机>`。纯 origin，不带 `/kaituan`、query、fragment。`/kaituan/` 由 nginx 去掉后再进网关 |
+| `GATEWAY_ALLOWED_HOSTS` | 同上 | 改成新域名或新 IP，逗号分隔。旧文件若写了 `<旧主机>` 必须换掉。不设则跟 `GATEWAY_PUBLIC_ORIGIN` 的主机名 |
+| `GATEWAY_COOKIE_PATH` | 同上 | 按新入口核对。路径仍是 `/kaituan/`、网关看到去掉前缀后的 `/` 时，值经常仍是 `/`。Path 和真实入口不一致时，登录后 `gateway_session` 带不上 |
+| Mac `--server` | 新 Mac `mac/outputs/trigger_launch.py` 的 `arguments()` | 改成 `https://<新主机>/kaituan`。不要带 hash 路由。worker-id 仍是 `zhongjiawei-mac-native` |
+| DNS | 新主机名的解析 | 先指到新服务器，再切 Mac |
+| HTTPS 证书 | 新机 nginx | 覆盖 `<新主机>`。site-entry 的 cookie 带 `Secure`，没有可用的 HTTPS 时操作员登不稳 |
+| nginx 里写死的旧主机 | `portal-ip-https.conf` 及它 include 的站点配置 | `server_name`、证书路径、门户卡片上的旧 URL 改成新机。`snippets/kaituan-trigger.conf` 反代目标一般仍是 `http://127.0.0.1:8792/`，不用改端口 |
+
+`GATEWAY_USER_TOKEN`、`GATEWAY_WORKER_TOKEN` 通常原样拷贝，换机器本身不必轮换。一旦轮换：nginx 里写死的操作员 Bearer（`snippets/kaituan-trigger.conf` 或 `kaituan-auth-header.conf`）和 Mac `credentials.json` 的 `worker_token` 一起改。
 
 ---
 
-## 3. 从旧电脑带走什么
+## 3. 前置
 
-代码走 git。下面这些 **gitignore 已排除**，clone 不会带来。用 U 盘、`scp` 或加密压缩包拷贝。拷完不要 `git add`。
+1. GitHub 账号已被仓库 Owner 加为 **Settings → Collaborators**。私有仓，没有权限 clone 会失败。
+2. 新服务器、新 Mac 能访问 `github.com/a192289394-oss/kaituan-seckill`。
+3. 旧服务器、旧 Mac 还在手边，能拷出第 4 节的文件。只 clone、不拷这些文件，新机器起不来。
+4. 新服务器是 Ubuntu，有 `ubuntu` 用户（systemd 单元以它运行），系统 `python3` 可用。网关只用标准库。
+5. 新 Mac 能装 BlueStacks，并保持不休眠（LaunchAgent 用 `caffeinate -is`，合盖休眠后执行会停）。
 
-### 3.1 代码（不要手拷整仓）
+---
+
+## 4. 从旧机带走什么
+
+代码走 git。下面这些被 `.gitignore` 排除，clone 不会带来。用 `scp`、U 盘或加密压缩包。拷完不要 `git add`。
 
 ```sh
 git clone git@github.com:a192289394-oss/kaituan-seckill.git
 ```
 
-仓库明确不包含（见根目录 `.gitignore`）：
+仓库里没有：`gateway.env`、各类 `.env`、`credentials.json`、`*.sqlite3`（及 WAL 旁路文件）、`private/`、`state/`、`.venv`、android-sdk、BlueStacks 镜像（体积见 `mac-EXCLUDED.md`）。
 
-- `gateway.env`、各类 `.env`
-- `credentials.json`（及 `.bak*`）
-- `*.sqlite3` 队列库、目录库、本机任务库（及 `.bak*`、WAL 旁路文件）
-- `private/`、`state/`
-- `.venv`、`__pycache__`、android-sdk、BlueStacks 镜像（体积见 `mac-EXCLUDED.md`）
+sqlite 使用 WAL。主文件旁边的 `-wal`、`-shm` 有则一起拷，只拷主文件会丢最近写入。
 
-### 3.2 必须另拷的清单
+### 4.1 旧服务器
 
-先在**旧 Mac 停掉 worker**（第 4.1 节），再拷。sqlite 使用 WAL，主文件旁边的 `-wal`、`-shm` 有则一起拷，只拷主文件会丢最近写入。
-
-| 旧位置 | 新位置 | 换 Mac 时 |
+| 旧位置 | 新服务器 | 说明 |
 |---|---|---|
-| `mac/work/trigger-worker/credentials.json` | 同一相对路径 | **要拷。** 权限保持 `0600`。内容是 JSON，键名为 `worker_token`，值等于服务器 `GATEWAY_WORKER_TOKEN`。不要打开后贴到聊天或提交 |
-| `mac/work/trigger-worker/catalog.sqlite3`（及 `-wal`/`-shm`） | 同一相对路径 | **要拷。** 酒店目录库。没有它，店名对不上 |
-| `mac/outputs/trigger-worker.json` | 已在 git 中 | 旧机若改过且没提交，用旧机这份覆盖 clone 结果。现网提交版是 BlueStacks 实例 `Tiramisu64`、adb `127.0.0.1:5555`、`autostart: true` |
-| `mac/work/trigger-worker/worker.sqlite3`（及 `-wal`/`-shm`） | 同一相对路径 | **有未完成的本机执行记录就拷。** 这是 Mac 本地任务库，不是服务器队列。空库可以不拷，进程会自己建 |
-| `~/Library/LaunchAgents/cn.keyframe.web-kaituan.plist` | 不要原样丢进新用户目录 | **只作对照。** 里面是旧机器的绝对路径。新 Mac 在依赖装好后重新 `install`（第 4.6 节） |
-| 模拟器里的 `/data/local/tmp/kaituan-frida-server` | 新实例同一路径 | **要准备。** 仓库不带这个二进制（`mac-EXCLUDED.md`）。程序只负责拉起已安装的文件，不会自动 push 或替换 |
-| BlueStacks 实例 `Tiramisu64`、来客登录态 | 新 Mac 上重做 | **git 带不过去。** 见第 4.5 节 |
+| `/opt/uiautomator2-trigger/gateway.env` | 同一路径，`0600`，属主 `ubuntu` | 要拷，再按第 2 节改 Host 相关键。键名见 [`server/gateway.env.example`](server/gateway.env.example)。文件里多出来的键保留 |
+| `/opt/uiautomator2-trigger/state/queue.sqlite3` 及 `-wal`/`-shm` | 同一路径，`0600` | **留任务就拷，拷之前先停旧网关。** 空库起步就不要拷 |
+| nginx：`portal-ip-https.conf`、`snippets/kaituan-trigger.conf`，以及仍被 include 的 `kaituan-auth-header.conf` | 新机对应路径 | 要拷结构，再改证书、`server_name`、写死的旧主机 |
+| site-entry 配置 | 新机同一套 | 操作员登录仍走全站 site-entry。库在 `/var/lib/site-entry/sessions.db` |
 
-服务器若一起搬，再加第 5 节的 `gateway.env` 和 `state/queue.sqlite3`。只换 Mac、服务器仍是 `1.12.208.101` 时，不要把服务器密钥拷到 Mac 上。
+`__Host-site_session` 绑在旧 Host 上。`<新主机>` 和 `<旧主机>` 不同时，浏览器不会带旧 cookie，操作员在新入口重新登录。会话库可以拷过去，Host 变了也不代替重新登录。
 
-### 3.3 旧任务留不留
+代码不要从旧机整目录对拷。新机用仓库 `server/`（见第 6 节）。
 
-- **服务器队列** `queue.sqlite3`：只换 Mac 时留在原服务器，不要拷一份到新机器上再起第二个网关。
-- **要保留进行中的单**：旧 worker 先停干净，服务器队列留在原地；Mac 侧把 `worker.sqlite3` 一起带走，这样本机「已经提交过」的记录还在。
-- **接受任务历史不要了**：不拷 `worker.sqlite3`。服务器上已有任务仍在原队列里，新 worker 会按原 worker-id 去领。不要另起一个 worker-id（队列库把第一台 worker 钉死，换 id 会 409 `worker_pinned`）。
+### 4.2 旧 Mac
+
+| 旧位置 | 新 Mac | 说明 |
+|---|---|---|
+| `mac/work/trigger-worker/credentials.json` | 同一相对路径，`0600` | 要拷。JSON 键名 `worker_token`，值等于服务器 `GATEWAY_WORKER_TOKEN` |
+| `mac/work/trigger-worker/catalog.sqlite3` 及 `-wal`/`-shm` | 同一相对路径 | 要拷。酒店目录库，没有它店名对不上 |
+| `mac/work/trigger-worker/worker.sqlite3` 及 `-wal`/`-shm` | 同一相对路径 | 有未完成的本机执行记录就拷。这是 Mac 本地任务库，不是服务器队列。不要可以不拷，进程会自己建 |
+| `mac/outputs/trigger-worker.json` | 已在 git 中 | 旧机改过且没提交时，用旧机这份覆盖。提交版是实例 `Tiramisu64`、adb `127.0.0.1:5555`、`autostart: true` |
+| `~/Library/LaunchAgents/cn.keyframe.web-kaituan.plist` | 不要原样放进新用户目录 | 只作对照。里面是旧 Mac 的绝对路径。新 Mac 在第 7 节重新 `install` |
+| 模拟器内 `/data/local/tmp/kaituan-frida-server` | 新实例同一路径 | 仓库不带这个二进制。程序只拉起已安装的文件，不会自动 push 或替换 |
+| BlueStacks 实例 `Tiramisu64`、来客登录态 | 新 Mac 上重做 | git 带不过去 |
+
+服务器上的 `gateway.env` 不要拷到 Mac。
+
+### 4.3 队列留不留
+
+- **留任务**：旧网关先 `systemctl stop`，再拷 `queue.sqlite3` 及 `-wal`/`-shm`。库里 `meta.worker_id` 已钉死，新 Mac 继续用 `zhongjiawei-mac-native`。旧网关保持停止。同时进行的本机记录要带上 `worker.sqlite3`。
+- **空库**：不拷服务器 sqlite。新进程首次启动会建库。第一台心跳成功的 worker-id 会被钉死，让 `zhongjiawei-mac-native` 第一个连上。旧队列里的任务不会出现在新库。
 
 ---
 
-## 4. 新 Mac
+## 5. 主路径顺序
 
-以下命令都在 clone 出来的 `mac/` 目录执行。`trigger_launch.py` 把自身的上一级当作根：虚拟环境、配置、`work/` 都相对这一层。
+1. 按第 4 节拷文件。要留任务时，这一步先停旧网关再拷队列。
+2. 第 6 节：新服务器装好网关（代码、`gateway.env`、队列、systemd、nginx、证书、site-entry）。
+3. 浏览器打开 `https://<新主机>/kaituan/`，过 site-entry，能看到「开团与秒杀」。这一步心跳可以是离线，Mac 还没改地址。
+4. 第 7 节：新 Mac 把 `--server` 改成 `https://<新主机>/kaituan`，再装 LaunchAgent，心跳变绿。
+5. 第 8 节：旧服务器停收单，旧 Mac `bootout`。两台不要同时收单。
 
-### 4.1 旧 Mac 先停
+空库方案里，第 3 步完成时旧服务器还可以开着（旧 Mac 仍指向它）。第 4 步一切地址，马上做第 5 步。这段空窗里旧服务器仍可能收下新单，那些单只在旧库。要空窗也不收单，就在改 `--server` 之前先停旧网关。
 
-在旧 Mac 上：
+---
+
+## 6. 新服务器
+
+旧布局（用于对照要拷哪些文件，主机换成新机）：
+
+| 项 | 值 |
+|---|---|
+| 目录 | `/opt/uiautomator2-trigger/`（`trigger_gateway.py`、`static/`、`state/`、`gateway.env`） |
+| 属主 | `ubuntu:ubuntu` |
+| systemd | `uiautomator2-trigger.service` |
+| 环境文件 | `EnvironmentFile=/opt/uiautomator2-trigger/gateway.env` |
+| 启动 | `ExecStart=/usr/bin/python3 /opt/uiautomator2-trigger/trigger_gateway.py --bind 127.0.0.1 --port 8792 --db /opt/uiautomator2-trigger/state/queue.sqlite3 --static /opt/uiautomator2-trigger/static` |
+| 单元文件 | 仓库 `mac/work/trigger-deploy/uiautomator2-trigger.service` 与上面一致，无密钥 |
+| Nginx | `portal-ip-https.conf` include `snippets/kaituan-trigger.conf` |
+| 路径 | `/kaituan/` |
+| 操作员 | 全站 site-entry（`auth_request`）。cookie `__Host-site_session`，库 `/var/lib/site-entry/sessions.db` |
+| Worker API | 仅 `/kaituan/api/worker/` 关闭主站鉴权；`Authorization` 原样转给网关，核对 `GATEWAY_WORKER_TOKEN` |
+
+`mac/work/trigger-deploy/deploy_gateway.py` 仍把 include 写进 `/etc/nginx/conf.d/dsh-ip-https.conf`，并把 `GATEWAY_USER_TOKEN` 嵌进 snippet，还把入口写成旧 IP。换机不要未读就重跑它。
+
+在新服务器的**仓库根**执行：
 
 ```sh
-launchctl bootout "gui/$(id -u)/cn.keyframe.web-kaituan"
+sudo mkdir -p /opt/uiautomator2-trigger/state
+sudo cp server/trigger_gateway.py /opt/uiautomator2-trigger/
+sudo cp -a server/static /opt/uiautomator2-trigger/static
+sudo cp /path/to/旧机拷来的/gateway.env /opt/uiautomator2-trigger/gateway.env
+# 留任务时再拷 queue.sqlite3、-wal、-shm 到 state/
+sudo chown -R ubuntu:ubuntu /opt/uiautomator2-trigger
+sudo chmod 750 /opt/uiautomator2-trigger
+sudo chmod 700 /opt/uiautomator2-trigger/state
+sudo chmod 600 /opt/uiautomator2-trigger/gateway.env
 ```
 
-确认已经卸掉（这条应失败或显示找不到服务）：
+编辑 `gateway.env`：改 `GATEWAY_PUBLIC_ORIGIN`、`GATEWAY_ALLOWED_HOSTS`、`GATEWAY_COOKIE_PATH`（第 2 节）。两个 token 非空且彼此不同。
 
 ```sh
-launchctl print "gui/$(id -u)/cn.keyframe.web-kaituan"
+sudo cp mac/work/trigger-deploy/uiautomator2-trigger.service /etc/systemd/system/uiautomator2-trigger.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now uiautomator2-trigger.service
 ```
 
-再确认没有残留进程：`ps aux | grep trigger_worker` 不应再有本项目的 worker。旧机停稳之前，不要在新机 `install`。
+确认只听 `127.0.0.1:8792`。源码缺省端口是 `8793`，手工裸跑会和单元不一致。用 systemd，不要另起一份。
 
-### 4.2 clone 与 Python 依赖
+然后：
+
+1. DNS 把 `<新主机>` 指到这台机器。证书装好，nginx 的 `ssl_certificate` 指向它。
+2. 放上 `portal-ip-https.conf` 与 `snippets/kaituan-trigger.conf`（有 `kaituan-auth-header.conf` 也放上）。改掉里面的旧主机和证书路径。保持：
+   - `/kaituan` 进到 `/kaituan/`
+   - `/kaituan/` 反代 `http://127.0.0.1:8792/`
+   - `/kaituan/api/worker/` 为 `auth_request off`，客户端 `Authorization` 原样转发
+   - 操作员路径若写死 `Authorization: Bearer …`，那一串等于 `GATEWAY_USER_TOKEN`
+   - 整段 `/kaituan/` 仍走 site-entry。不要为了消 401 关掉它
+3. `sudo nginx -t` 通过后 reload。
+4. 浏览器打开 `https://<新主机>/kaituan/`，过 site-entry，看到标题「开团与秒杀」。只看到 HTTP 200 不算通过。本机再确认 `systemctl is-active uiautomator2-trigger.service` 为 `active`，且只听 `127.0.0.1:8792`。此时 Mac 未切过来，收单心跳离线是预期。
+
+---
+
+## 7. 新 Mac
+
+新入口已经能登录之后再做。命令在 clone 出来的 `mac/` 目录。`trigger_launch.py` 把自身的上一级当作根。
+
+### 7.1 依赖
 
 ```sh
 git clone git@github.com:a192289394-oss/kaituan-seckill.git
@@ -115,171 +183,145 @@ python3 -m venv .venv
 .venv/bin/pip install -r outputs/requirements.lock.txt
 ```
 
-`.venv` 不进仓，必须在新机器重建。锁文件里的 `frida` 版本是 `16.7.19`。模拟器里 `kaituan-frida-server --version` 必须打出同一版本，否则执行期会拒绝替换二进制并停写。
+`.venv` 不进仓。锁文件里的 `frida` 是 `16.7.19`。模拟器里 `kaituan-frida-server --version` 必须打出同一版本，否则执行期拒绝替换二进制并停写。
 
-对照 [`mac-EXCLUDED.md`](mac-EXCLUDED.md) 看还有哪些大目录没进仓。换机至少要补：
+对照 [`mac-EXCLUDED.md`](mac-EXCLUDED.md)，换机至少再补：
 
-- `work/android-sdk/platform-tools/adb`（LaunchAgent 的 `PATH` 写死这一处；也可从旧机 `work/android-sdk/` 整目录拷来，不要提交）
-- BlueStacks 应用本身（装到 `/Applications/BlueStacks.app`）
-- 第 3.2 节的凭证、目录库、按需的 `worker.sqlite3`
+- `work/android-sdk/platform-tools/adb`（LaunchAgent 的 `PATH` 写死这一处；可从旧 Mac 拷整个 `work/android-sdk/`，不要提交）
+- `/Applications/BlueStacks.app`
+- 第 4.2 节的凭证、目录库、按需的 `worker.sqlite3`
 
-`work/bluestacks-root-*` 镜像、apk 分析包、浏览器 profile 不是启动所必需的源码。没有旧机那份 root 镜像时，新实例要自己准备好 root（程序发现不是 root 会停，不会改镜像）。
+没有旧机那份 root 镜像时，新实例自己准备 root。程序发现不是 root 会停，不会改镜像。
 
-### 4.3 放回凭证与配置
+### 7.2 凭证
 
 ```sh
 mkdir -p work/trigger-worker
 chmod 700 work/trigger-worker
-# 把旧机的 credentials.json、catalog.sqlite3（及 -wal/-shm）放进 work/trigger-worker/
+# 放入 credentials.json、catalog.sqlite3（及 -wal/-shm），按需放入 worker.sqlite3
 chmod 600 work/trigger-worker/credentials.json
 ```
 
-`credentials.json` 形如（值用旧机那一串，不要新编一个除非第 5 节换了服务器密钥）：
-
 ```json
-{"worker_token": "<与服务器 GATEWAY_WORKER_TOKEN 相同>"}
+{"worker_token": "<与新服务器 GATEWAY_WORKER_TOKEN 相同>"}
 ```
 
-LaunchAgent **不会**把 token 写进 plist。`outputs/trigger_launch.py` 在 `run` / `probe` / `once` 时读取该文件，检查权限必须是 `0600`，再放进环境变量 `GATEWAY_WORKER_TOKEN`。直接跑 `trigger_worker.py` 时也可以自己导出这个环境变量；走 LaunchAgent 时以文件为准。
+`outputs/trigger_launch.py` 在 `run` / `probe` / `once` 时读这个文件，权限必须是 `0600`，再写入环境变量 `GATEWAY_WORKER_TOKEN`。token 不进 plist。
 
-确认 `outputs/trigger-worker.json`：
+`outputs/trigger-worker.json`：实例 `Tiramisu64`，adb `127.0.0.1:5555`。新机器端口或实例名不同就改这份 json，不要把密钥一起提交。
 
-- `android_device.instance` 为 `Tiramisu64`
-- `android_device.adb_endpoint` 为 `127.0.0.1:5555`
-- 实例名或端口若在新机器上不同，改这份 json，不要改完提交进仓（除非团队决定改现网配置）
+### 7.3 改 `--server` 再安装
 
-### 4.4 确认网关地址
+编辑 `outputs/trigger_launch.py` 的 `arguments()`：
 
-打开 `outputs/trigger_launch.py` 的 `arguments()`。现网写死的是：
-
-- `--server https://1.12.208.101/kaituan`
-- `--worker-id zhongjiawei-mac-native`
+- `--server` 改为 `https://<新主机>/kaituan`
+- `--worker-id` 保持 `zhongjiawei-mac-native`
 - `--config` → `outputs/trigger-worker.json`
 - `--catalog-db` → `work/trigger-worker/catalog.sqlite3`
 
-服务器没搬时，`--server` 保持这一行。服务器搬了，先完成第 5 节，再把这一行改成新的 `https://<新主机>/kaituan`（不要带未定的 hash 路由）。worker-id 保持 `zhongjiawei-mac-native`，除非服务器是空队列且你们决定重钉（见第 5 节）。
+来客与模拟器（git 带不过去）：
 
-改的是本机文件。不要把带真实环境差异的实验改动连同密钥一起提交。
+1. BlueStacks 实例名 `Tiramisu64`。
+2. `work/android-sdk/platform-tools/adb connect 127.0.0.1:5555` 后 `get-state` 为 `device`。
+3. 实例内 `su -c id` 含 `uid=0(root)`。
+4. `/data/local/tmp/kaituan-frida-server --version` 为 `16.7.19`。
+5. 在该实例登录来客（包名 `com.bytedance.ls.merchant`）。旧 Mac 上的来客先退出，两边同时登录会互踢。
 
-### 4.5 来客与模拟器
+LaunchAgent 尚未安装时先探活：
 
-这些 git 带不过去，新机器要重新准备：
+```sh
+.venv/bin/python outputs/trigger_launch.py probe
+```
 
-1. 安装 BlueStacks，实例名 `Tiramisu64`（与 json 一致）。
-2. 打开该实例的 adb，本机 `work/android-sdk/platform-tools/adb connect 127.0.0.1:5555` 后 `get-state` 为 `device`。
-3. 实例内 root 可用（`su -c id` 含 `uid=0(root)`）。程序不会自动 root。
-4. 把 `kaituan-frida-server` 放到 `/data/local/tmp/kaituan-frida-server`，`--version` 等于本机 venv 的 frida `16.7.19`。
-5. 在该实例登录来客（包名 `com.bytedance.ls.merchant`）。旧机和新机同时登录同一抖音号会互踢，旧机模拟器上的来客先退出。
-
-### 4.6 安装 LaunchAgent 并探活
-
-依赖、凭证、adb 都就绪后再安装：
+成功输出里有 `"gateway": "reachable"`。然后再：
 
 ```sh
 .venv/bin/python outputs/trigger_launch.py install
 ```
 
-这会写入 `~/Library/LaunchAgents/cn.keyframe.web-kaituan.plist`（`0600`）并 `launchctl bootstrap`。plist 内容：`caffeinate -is` 包着 `.venv/bin/python outputs/trigger_launch.py run`，`KeepAlive` + `RunAtLoad`，日志在 `work/trigger-worker/stdout.log` 与 `stderr.log`。
+这会写入 `~/Library/LaunchAgents/cn.keyframe.web-kaituan.plist`（`0600`）并 `launchctl bootstrap`。进程是 `caffeinate -is` 包着 `.venv/bin/python outputs/trigger_launch.py run`，日志在 `work/trigger-worker/stdout.log` 与 `stderr.log`。
 
-已装过、只是改了 `--server` 或脚本时，在 `mac/` 下重新执行 `install` 之前要先 `bootout` 旧 label，否则 bootstrap 会报服务已存在。
-
-探活：
-
-- LaunchAgent **还没跑**时：`.venv/bin/python outputs/trigger_launch.py probe`。成功会打出带 `"gateway": "reachable"` 的 JSON。
-- LaunchAgent **已经在跑**时，再 probe 会被单机全局锁拒绝（`Another Mac worker owns the global lock`）。这表示已有一个 worker，不要再起第二个。改看工作台心跳，或看 `stderr.log`。
+已经 bootstrap 过又改了 `--server`：先 `bootout` 这个 label，再 `install`。Agent 已在跑时再 probe，会被全局锁拒绝（`Another Mac worker owns the global lock`），改看工作台心跳。
 
 ---
 
-## 5. 服务器也迁到新机（可选）
+## 8. 旧机停干净
 
-只换 Mac 时跳过本节。
+新工作台心跳变绿之后马上做。留任务的拷贝如果在第 4 节已经停过旧网关，这里再核对一次，确认没有被重新拉起。
 
-现网是 Ubuntu。网关只听本机，公网走 nginx。
+旧服务器：
 
-| 项 | 现网 |
-|---|---|
-| 目录 | `/opt/uiautomator2-trigger/`（`trigger_gateway.py`、`static/`、`state/`、`gateway.env`） |
-| 属主 | `ubuntu:ubuntu` |
-| systemd | `uiautomator2-trigger.service` |
-| 环境文件 | `EnvironmentFile=/opt/uiautomator2-trigger/gateway.env` |
-| 启动 | `ExecStart=/usr/bin/python3 /opt/uiautomator2-trigger/trigger_gateway.py --bind 127.0.0.1 --port 8792 --db /opt/uiautomator2-trigger/state/queue.sqlite3 --static /opt/uiautomator2-trigger/static` |
-| 单元文件 | 仓库内 `mac/work/trigger-deploy/uiautomator2-trigger.service` 与上述一致，可作副本；里面没有密钥 |
-| Nginx | `portal-ip-https.conf` include `snippets/kaituan-trigger.conf` |
-| 入口 | `https://1.12.208.101/kaituan/` |
-| 操作员 | 全站 `site-entry`（`auth_request`）。会话 cookie `__Host-site_session`，库 `/var/lib/site-entry/sessions.db` |
-| Worker API | 仅 `/kaituan/api/worker/` 关闭主站鉴权；请求带 worker 自己的 `Authorization`，由网关核对 `GATEWAY_WORKER_TOKEN` |
+```sh
+sudo systemctl stop uiautomator2-trigger.service
+sudo systemctl disable uiautomator2-trigger.service
+systemctl is-active uiautomator2-trigger.service
+pgrep -af trigger_gateway.py
+```
 
-仓库里的 `mac/work/trigger-deploy/deploy_gateway.py` 仍把 include 写进 `/etc/nginx/conf.d/dsh-ip-https.conf`，并把 `GATEWAY_USER_TOKEN` 嵌进 snippet。这和现网文件名不一致。换机时拷旧机**正在使用**的 nginx 配置，不要未读就重跑该脚本。
+`is-active` 应为 `inactive`，`pgrep` 无本服务进程，`127.0.0.1:8792` 上没有监听。旧入口再打开应无法收单（502 或页面不可用）。不要两台同时 `enable`。
 
-### 5.1 建议顺序
+旧 Mac：
 
-1. 旧 Mac worker 已按第 4.1 节停掉。
-2. 旧服务器：`sudo systemctl stop uiautomator2-trigger.service`。确认没有第二个 `trigger_gateway.py`。
-3. 新机器安装系统 `python3`，并有 `ubuntu` 用户（单元文件以该用户运行）。网关只用标准库，不需要 Mac 那个 `.venv`。
-4. 在 clone 的**仓库根**放代码（用 `server/`，不用 `mac/outputs/` 里的同名副本）：
+```sh
+launchctl bootout "gui/$(id -u)/cn.keyframe.web-kaituan"
+launchctl print "gui/$(id -u)/cn.keyframe.web-kaituan"
+pgrep -fl trigger_worker
+```
 
-   ```sh
-   sudo mkdir -p /opt/uiautomator2-trigger/state
-   sudo cp server/trigger_gateway.py /opt/uiautomator2-trigger/
-   sudo cp -a server/static /opt/uiautomator2-trigger/static
-   sudo chown -R ubuntu:ubuntu /opt/uiautomator2-trigger
-   sudo chmod 750 /opt/uiautomator2-trigger
-   sudo chmod 700 /opt/uiautomator2-trigger/state
-   ```
-
-5. 放入 `gateway.env`，`chmod 600`，属主 `ubuntu`。键见 [`server/gateway.env.example`](server/gateway.env.example)。**值从旧机原样拷贝。** 两个 token 必须都非空且彼此不同。`GATEWAY_PUBLIC_ORIGIN` 是不带路径的 origin（入口的 `/kaituan/` 由 nginx 去掉，不要写进这个变量）。现网文件里多出来的键一律保留。
-6. 队列二选一：
-   - **留任务**：停稳旧进程后，把 `state/queue.sqlite3` 以及 `-wal`、`-shm` 拷到新机同一路径，`chmod 600`。库里的 `meta.worker_id` 已经钉死，Mac 必须继续用 `zhongjiawei-mac-native`。
-   - **空库**：不拷 sqlite。进程首次启动会建库。第一台心跳成功的 worker-id 会被钉死。现网就让 `zhongjiawei-mac-native` 第一个连上。空库没有旧任务。
-7. 安装单元：把 `mac/work/trigger-deploy/uiautomator2-trigger.service` 放到 `/etc/systemd/system/uiautomator2-trigger.service`，然后 `sudo systemctl daemon-reload && sudo systemctl enable --now uiautomator2-trigger.service`。确认在听 `127.0.0.1:8792`。源码里端口缺省是 `8793`，手工裸跑会和单元不一致，用 systemd，不要另起一份。
-8. Nginx：从旧机拷 `portal-ip-https.conf` 与 `snippets/kaituan-trigger.conf`（以及仍在 include 的 `kaituan-auth-header.conf`，若存在）。保持：
-   - `/kaituan` 进到 `/kaituan/`
-   - `/kaituan/` 反代到 `http://127.0.0.1:8792/`
-   - `/kaituan/api/worker/` 为 `auth_request off`，并把客户端的 `Authorization` 原样转给网关
-   - 操作员路径若写死了 `Authorization: Bearer …`，那一串必须等于 `GATEWAY_USER_TOKEN`
-   - 全站 `site-entry` 继续罩住操作员页面。不要为了消 401 把整段 `/kaituan/` 的 site-entry 关掉
-9. `sudo nginx -t` 通过后再 reload。site-entry 的密码与 `/var/lib/site-entry/sessions.db` 按旧机现网方式迁移；本文不重写全站登录。
-10. 新入口能打开后，再改 Mac `trigger_launch.py` 的 `--server` 并 `install`。旧服务器保持 stop，避免两台网关各拿一份队列。
-
-### 5.2 回滚
-
-- Mac：`--server` 改回 `https://1.12.208.101/kaituan`，`bootout` 后重新 `install`（或 kickstart）。
-- 旧服务器单元若还在：确认新机单元已 stop，再在旧机 `systemctl start uiautomator2-trigger.service`。
-- 队列只在一边是权威。回滚后看一眼进行中的租约，不要两台同时 `start`。
+`print` 应失败或找不到服务，`pgrep` 无本项目 worker。来客退出登录。不要再 `bootstrap` 这个 label。
 
 ---
 
-## 6. 验收
+## 9. 验收
 
-按这个顺序，不要颠倒：
-
-1. 旧 Mac 的 `cn.keyframe.web-kaituan` 已 `bootout`，旧机没有 `trigger_worker` 进程。旧模拟器上来客已退出。
-2. 浏览器打开工作台（现网 `https://1.12.208.101/kaituan/`；服务器若已迁，打开新入口）。先过 site-entry。页面标题为「开团与秒杀」。只看到 HTTP 200 不算通过，要能看到工作台内容。
-3. 新 Mac LaunchAgent 在跑。工作台上 Mac 收单变为在线（心跳约 30 秒一次，超过 90 秒无心跳算离线）。
-4. 顶栏或状态里执行环境不要被心跳冒充：Android、root、来客、原生接口要单独看。来客未登录、adb 不是 `device`、frida 版本不一致时，可以心跳在线但不可写。这是预期，先补第 4.5 节，不要改业务代码绕过。
-5. 旧机不要再 `bootstrap` 同一个 label。验收完保持旧 worker 停止。
+1. `https://<新主机>/kaituan/` 过 site-entry 后能看到工作台，标题「开团与秒杀」。
+2. 新 Mac 的 `cn.keyframe.web-kaituan` 在跑。工作台 Mac 收单在线（心跳约 30 秒，超过 90 秒无心跳算离线）。
+3. Android、root、来客、原生接口单独看。未登录、adb 不是 `device`、frida 版本不一致时，可以心跳在线但不可写。先补第 7.3 节。
+4. 旧服务器单元 inactive 且已 disable；旧 Mac 无 worker 进程、来客已退出。
 
 ---
 
-## 7. 常见坑
+## 10. 只换 Mac（次要）
+
+服务器留在原地时用这一节，跳过第 6、8 节里的服务器步骤。
+
+- 不拷 `gateway.env`，不新起网关，不复制 `queue.sqlite3`。
+- `--server` 保持旧机当前入口（仓库里那行是 `https://1.12.208.101/kaituan`，以服务器实际入口为准）。`public_origin`、`allowed_hosts`、`cookie_path`、DNS、证书都不用改。
+- 旧 Mac 先 `bootout` 并确认没有 `trigger_worker`，再在新 Mac 做第 7 节（不要改 `--server`）并 `install`。
+- 来客只留在新 Mac。
+
+---
+
+## 11. 回滚
+
+- 新服务器先 `systemctl stop` 并 `disable`，确认 8792 没有进程。
+- 旧服务器再 `systemctl enable --now uiautomator2-trigger.service`。队列只认一边：留任务的那份库在哪台，哪台才是权威。
+- 新 Mac `--server` 改回 `https://<旧主机>/kaituan`，`bootout` 后重新 `install`。若执行机也要退回旧 Mac，新 Mac 先 `bootout`，再在旧 Mac bootstrap。
+- 两台网关不要同时 `start`。
+
+---
+
+## 12. 常见坑
 
 | 现象 | 原因 |
 |---|---|
-| clone 之后一启动就缺 token / 缺库 | 第 3.2 节没拷。`gateway.env`、`credentials.json`、`catalog.sqlite3` 都不在 git 里 |
-| 主站登录成功，工作台接口仍 401 | `GATEWAY_USER_TOKEN` 轮换后，nginx 里写死的 Bearer 没一起改（现网可能在 `snippets/kaituan-trigger.conf`，也可能在 `kaituan-auth-header.conf`）。去同步那一处，不要关掉 `/kaituan/` 的 site-entry |
-| worker 心跳 401，页面却正常 | Mac `credentials.json` 的 `worker_token` 和服务器 `GATEWAY_WORKER_TOKEN` 不是同一串。worker 路径走 token，不走浏览器登录 |
-| `Worker credentials must have permission 0600` | `credentials.json` 权限过宽。`chmod 600` |
-| 409 `worker_pinned` | 队列库已钉死 `zhongjiawei-mac-native`，新配置用了别的 `--worker-id` |
-| 两台电脑任务乱跳或重复执行 | 旧机 LaunchAgent 没停，或两台服务器各跑一份 `queue.sqlite3`。worker 锁只防同一台 Mac 上的第二个进程，防不住两台电脑用同一个 worker-id |
-| 来客刚登录就被踢下线 | 新旧模拟器同时登录同一抖音号。只留新机 |
-| probe 报全局锁 | LaunchAgent 已经在跑。看工作台心跳即可 |
-| 手工 `python3 trigger_gateway.py` 端口对不上 | 缺省端口是 8793，现网单元是 8792。用 systemd |
-| 目录店名全不中 | 没拷 `catalog.sqlite3`，或只拷了主库、没拷 `-wal` |
+| 新入口 403，或登录后接口仍失败 | `GATEWAY_PUBLIC_ORIGIN` / `GATEWAY_ALLOWED_HOSTS` 还是 `<旧主机>`。Host 不在白名单会被拒 |
+| 主站登录成功，工作台接口 401 | cookie Path 不对，或 `GATEWAY_USER_TOKEN` 与 nginx 写死的 Bearer 不一致。同步 Bearer，不要关掉 `/kaituan/` 的 site-entry |
+| 新工作台一直离线 | Mac `--server` 还指着旧地址，或旧 Mac 已停、新 Mac 还没 `install` |
+| worker 心跳 401，页面正常 | `credentials.json` 的 `worker_token` 和新服务器 `GATEWAY_WORKER_TOKEN` 不是同一串 |
+| `Worker credentials must have permission 0600` | `chmod 600 credentials.json` |
+| 409 `worker_pinned` | 拷来的队列已钉死 `zhongjiawei-mac-native`，新配置用了别的 id |
+| 任务乱跳或重复执行 | 旧网关没停，或两台各有一份 `queue.sqlite3`；或新旧 Mac 同时跑着同一个 worker-id。本机锁防不住两台电脑 |
+| 来客刚登录就被踢下线 | 新旧模拟器同时登录同一抖音号 |
+| probe 报全局锁 | 这台 Mac 上 LaunchAgent 已经在跑 |
+| 手工 `python3 trigger_gateway.py` 端口不对 | 缺省 8793，单元是 8792 |
+| 店名全不中 | 没拷 `catalog.sqlite3`，或没拷 `-wal` |
+| 证书警告、site-entry 登不上 | 新主机 DNS 或证书还没换成 `<新主机>` |
 
 ---
 
-## 8. 和 `migration/` 的区别
+## 13. 和 `migration/` 的区别
 
-[`migration/`](migration/) 准备的是：操作入口并进经营台（`dashboard.keyframe-gz.com`），现网 IP 入口以后怎么切。那边默认执行机还是这一台 Mac，模拟器不搬。
+[`migration/`](migration/) 准备的是操作入口并进经营台（`dashboard.keyframe-gz.com`），执行机可以仍是原来那台 Mac。
 
-本文是换电脑：新 Mac 重装执行环境，以及可选地把 `/opt/uiautomator2-trigger/` 搬到新 Ubuntu。域名没变时，`--server` 保持 `https://1.12.208.101/kaituan`。
+本文是换机器：新 Ubuntu 接 `/opt/uiautomator2-trigger/`，新 Mac 的 `--server` 指向 `<新主机>`，旧服务器和旧 Mac 停干净。

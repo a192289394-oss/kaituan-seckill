@@ -4,7 +4,7 @@
 
 ## 目录
 
-- `server/` — 服务器网关与静态工作台（对应现网 `/opt/uiautomator2-trigger/`，入口 `/kaituan/`）
+- `server/` — 服务器网关与静态工作台（部署到 `/opt/uiautomator2-trigger/`，入口路径 `/kaituan/`）
 - `mac/` — Mac 侧 BlueStacks / 执行与部署相关源码（已瘦身）
 - `migration/` — 迁入经营台 dashboard 的准备材料（与换电脑不是同一件事）
 - `mac-EXCLUDED.md` — Mac 侧未纳入仓库的大目录说明
@@ -15,7 +15,7 @@
 
 ## 换电脑 / 部署
 
-把现有这一套换到另一台电脑上继续维护或运行，按 [DEPLOY.md](DEPLOY.md) 做。clone 之后还要另拷凭证、目录库和（若搬服务器）`gateway.env`、队列库，并先停旧 worker 再启新机。
+把现有这一套换到另一台电脑上继续维护或运行（服务器和 Mac 一起换），按 [DEPLOY.md](DEPLOY.md) 做。先在新服务器放好网关、`gateway.env` 和队列库，新入口能登录后，再把 Mac 的 `--server` 指到新地址，并停掉旧服务器与旧 Mac。
 
 ## 协作
 
