@@ -1,18 +1,18 @@
+> **合前阻塞：** 本文描述的是**目标对齐**（安装骨架与目标能力清单）。**仓↔现网对齐完成前，不宣称「装完 = 现网能力」**。是否已对齐，以 **[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)** 的哈希比对 / 验收结论为准。
+
 # 开团 / 秒杀自动化 · AI 可读安装说明书（AI-INSTALL）
 
 > 状态：产品化安装主文档（2026-10-16）。目录种子口径见 §5.8；风控全文见 [risk-rules.md](risk-rules.md)。
 > 适用仓库：`a192289394-oss/kaituan-seckill`
 > 本文**不含任何真实密钥**。所有 token / 主机 / worker-id 均为假值，安装者必须自行生成。
 > 标记 `EXAMPLE_LIVE_ONLY` 的内容 = 现网样板，**仅供对照，禁止当默认值**。
->
-> **硬约束：** 先对齐仓库和现网，再谈「装完=现网能力」；对齐前说明书可写，**不宣称能力已对齐**。这是**目标对齐**；**仓↔现网对齐完成前不宣称**装完即具备现网能力；是否对齐以架构师仓↔现网哈希比对与验收（跟踪 issue / 相关 PR，如哈希验收 PR）为准。
 
 ---
 
 ## 0. 一句话
 
 **网页下单 → Mac 来客执行 → 回网页。**
-你要装的是**一套**：**1 个 gateway（服务器）+ 1 个 Mac worker（执行机）**。上面这句是产品目标。第 6、7 章是安装步骤。这是**目标对齐**；**仓↔现网对齐完成前不宣称**装完即具备现网能力。是否对齐以架构师仓↔现网哈希比对与验收为准（见文首硬约束）。
+你要装的是**一套**：**1 个 gateway（服务器）+ 1 个 Mac worker（执行机）**。上面这句是产品目标。第 6、7 章是安装步骤。这是**目标对齐**；**仓↔现网对齐完成前不宣称**装完即具备现网能力。是否对齐以架构师仓↔现网哈希比对与验收为准（见文首合前阻塞横幅）。
 
 ---
 
@@ -22,7 +22,7 @@
 |---|---|
 | 人类运维 / 店主技术同学 | 按第 6、7、8 章顺序执行；遇到问题查第 10 章。非工程师先看 [README-人类安装.md](README-人类安装.md)。 |
 | AI agent（Claude / Cursor 等） | 第 2 章 MUST / MUST NOT 是**硬约束**，任何步骤与之冲突时以第 2 章为准；第 5 章配置键表是唯一权威键名来源；第 8 章是安装骨架与目标清单的读回判定。第 8 章全绿仍是**目标对齐**，**仓↔现网对齐完成前不宣称**装完即具备现网能力。 |
-| 架构师 | 第 3、9 章是安装与风控契约。第 4 章是**目标清单**。是否与现网对齐，以仓↔现网哈希比对与验收（跟踪 issue / 相关 PR，如哈希验收 PR）为准。缺口见 [G-STATUS.md](G-STATUS.md)。 |
+| 架构师 | 第 3、9 章是安装与风控契约。第 4 章是**目标清单**。是否与现网对齐，以仓↔现网哈希比对与验收（[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)）为准。缺口见 [G-STATUS.md](G-STATUS.md)。 |
 
 **AI agent 读本文时的执行纪律**
 
@@ -119,7 +119,7 @@
 
 ## 4. 能力契约（目标清单）
 
-> **醒目说明：** 下表是**目标对齐**清单，描述目标与安装骨架。**仓↔现网对齐完成前不宣称**装完即具备现网能力。是否对齐以架构师仓↔现网哈希比对与验收（跟踪 issue / 相关 PR，如哈希验收 PR）为准。
+> **醒目说明：** 下表是**目标对齐**清单，描述目标与安装骨架。**仓↔现网对齐完成前不宣称**装完即具备现网能力。是否对齐以架构师仓↔现网哈希比对与验收（[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)）为准。
 
 ### 4.1 目标清单
 
@@ -226,7 +226,7 @@ GATEWAY_WORKER_ID=mac-worker-1
 | `--ca-file` | 可选：自签/私有 CA；主机名校验仍开启 | 空 |
 | `--probe` / `--once` | 仅元数据心跳（不碰安卓、不领任务）/ 跑一轮 | 验收时用 |
 
-> **现状警告**：当前 `mac/outputs/trigger_launch.py` 把 `--server` 与 `--worker-id` 写死为现网值（对照见第 11 章，`EXAMPLE_LIVE_ONLY`）。在启动器改为读取环境变量或 `launch.json` 之前（见 [G-STATUS.md](G-STATUS.md) G2，另 PR，本文件不改该脚本），新装者必须在本机副本里改成自己的值，**不要提交回仓库**。参数化后的目标接口：
+> **现状警告（待 PR-3 参数化后更新）：** 当前 `mac/outputs/trigger_launch.py` 把 `--server` 与 `--worker-id` 写死为现网值（对照见第 11 章，`EXAMPLE_LIVE_ONLY`）。本 PR 不改该脚本。在 PR-3 把启动器改为读取环境变量或 `launch.json` 之前，新装者必须在本机副本里改成自己的值，**不要提交回仓库**。参数化后的目标接口：
 
 ```sh
 # 目标（PR 落地后）：环境变量或旁路 json，二选一
@@ -450,8 +450,10 @@ chmod 0600 work/trigger-worker/credentials.json
 
 ### 7.4 指向自己的 gateway 与 worker-id
 
-PR 落地前（本机临时修改，不提交）：把 `outputs/trigger_launch.py` 中 `'--server','…'` 改为 `'https://gateway.example.com/kaituan'`，`'--worker-id','…'` 改为 `'mac-worker-1'`。
-PR 落地后：用 5.6 节的 `KAITUAN_SERVER` / `KAITUAN_WORKER_ID` 或 `work/trigger-worker/launch.json`。
+> **待 PR-3 参数化后更新。** 本 PR 不改 `trigger_launch.py`。
+
+PR-3 落地前（本机临时修改，不提交）：把 `outputs/trigger_launch.py` 中 `'--server','…'` 改为 `'https://gateway.example.com/kaituan'`，`'--worker-id','…'` 改为 `'mac-worker-1'`。
+PR-3 落地后：用 5.6 节的 `KAITUAN_SERVER` / `KAITUAN_WORKER_ID` 或 `work/trigger-worker/launch.json`。本节描述随 PR-3 更新。
 
 ### 7.5 单次探测 → 常驻
 
@@ -563,7 +565,7 @@ tail -n 50 work/trigger-worker/stderr.log
 | worker-id | `zhongjiawei-mac-native` | `mac-worker-1` |
 | 登录 | nginx `auth_request` + site-entry；操作员路径 nginx 写死 `Authorization: Bearer <USER_TOKEN>`；worker 路径 `auth_request off` 透传 | 默认独立登录（第 6.6 节） |
 | 部署脚本 | `mac/work/trigger-deploy/deploy_gateway.py`（写死 IP、nginx Bearer 注入、portal 卡片） | 本文第 6 章手工/脚本化步骤 |
-| Mac 启动器 | `trigger_launch.py` 写死 `--server https://1.12.208.101/kaituan --worker-id zhongjiawei-mac-native` | 5.6 节参数化 |
+| Mac 启动器 | `EXAMPLE_LIVE_ONLY`：`trigger_launch.py` 写死 `--server https://1.12.208.101/kaituan --worker-id zhongjiawei-mac-native`。**待 PR-3 参数化后更新**；本 PR 不改该脚本 | 5.6 节参数化 |
 
 ---
 
@@ -575,7 +577,7 @@ tail -n 50 work/trigger-worker/stderr.log
 - 当前 `main` 没有根目录 `DEPLOY.md`，因此本轮不新增、也不改名任何部署笔记。新人入口不指向它。
 - 新人入口顺序：仓库根 [README.md](../README.md) → [README-人类安装.md](README-人类安装.md) → 本文 → [install-mac-android-runtime.md](install-mac-android-runtime.md)。
 - 缺口 G1–G18 见 [G-STATUS.md](G-STATUS.md)。
-- 安装步骤与 §4 都是**目标对齐**。**仓↔现网对齐完成前不宣称**装完即具备现网能力。是否对齐以架构师仓↔现网哈希比对与验收（跟踪 issue / 相关 PR，如哈希验收 PR）为准。
+- 安装步骤与 §4 都是**目标对齐**。**仓↔现网对齐完成前不宣称**装完即具备现网能力。是否对齐以架构师仓↔现网哈希比对与验收（[GitHub issue #2](https://github.com/a192289394-oss/kaituan-seckill/issues/2)）为准。
 
 ---
 
