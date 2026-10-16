@@ -1,5 +1,7 @@
 # Mac 执行侧 · 迁入 dashboard 准备注意点
 
+换一台 Mac 重装执行机，看 [DEPLOY.md](../DEPLOY.md)。下文只列迁 dashboard 域名时要改的网关地址。
+
 状态：先准备、不真迁。执行机仍是 macOS（BlueStacks + 来客）。
 
 ## 现状（2026-10-16）
