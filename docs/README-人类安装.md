@@ -24,7 +24,7 @@
 
 | 方式 | 入口 |
 |---|---|
-| 本地 | `http://127.0.0.1:<PORT>`，示例端口 `8792` |
+| 本地 | `http://127.0.0.1:<PORT>`。**端口以这套部署单元的 systemd `--port` 为准。** 产品化示例常用 `8792`；`trigger_gateway.py` 源码缺省是 `8793`。二者都不是唯一正确端口 |
 | 服务器 | `https://你的域名/kaituan/api/...`（前缀样板是 `/kaituan/`，可以改，但要和 cookie、Mac 地址一起改） |
 
 操作员只用这些：登录、退出、看状态、看任务、下单、看某一单的审计、取消 / 恢复 / 重试。Mac 专用的 `/api/worker/*` **不要**写进你的前端。
@@ -49,7 +49,7 @@
 1. **生成两把钥匙**（在任意电脑上跑两次，得到两串不一样的字符）：
    `python3 -c 'import secrets;print(secrets.token_urlsafe(32))'`
    第一串叫「操作员钥匙」，第二串叫「Mac 干活钥匙」。**两把必须不一样**，谁都别发到群里。
-2. **装网关**：按 [AI-INSTALL.md](AI-INSTALL.md) 第 6 章。本机联调可只听 `127.0.0.1:8792`；要远程再用 nginx。默认用网关自己的登录接口，不必接别的网站登录。
+2. **装网关**：按 [AI-INSTALL.md](AI-INSTALL.md) 第 6 章。本机联调听 `127.0.0.1:<PORT>`，这个端口就是 systemd 里的 `--port`。产品化示例常用 `8792`；源码不写 `--port` 时缺省是 `8793`。要远程再用 nginx，并转到同一个端口。默认用网关自己的登录接口，不必接别的网站登录。
 3. **用 API 试登录**：按第 6 章的 curl 示例（假 token）确认能拿到 `gateway_session`。仓内静态页若打开了，只当调试壳，不拿它的样子当验收。
 4. **装 Mac 的模拟器**：按 [install-mac-android-runtime.md](install-mac-android-runtime.md)：模拟器 → adb → root → Frida（挂钩/注入）→ 装来客和销帮 → **两边都手动登录**。
 5. **装 Mac 干活程序**：按 [AI-INSTALL.md](AI-INSTALL.md) 第 7 章。凭证权限 0600。服务器地址和 worker 名字要和网关一致（示例 `https://你的域名/kaituan` 与 `mac-worker-1`）。启动器里写死的现网地址是样板，新装必须改成自己的；参数化合入等 Mac 回归书面确认（GitHub #4），本说明不改那份代码。若有酒店目录种子，放到 `work/trigger-worker/catalog.sqlite3`；没有也能启动，目录为空。

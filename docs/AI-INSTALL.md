@@ -101,6 +101,8 @@
  └──────────────────────────────────────────────────────────────────────┘
 ```
 
+图中的 `8792` 是产品化示例，不是唯一正确端口。实际监听端口以该部署单元的 systemd `--port` 为准。`trigger_gateway.py` 不带 `--port` 时，源码缺省是 `8793`。
+
 ### 3.2 部署单元定义
 
 - **一套 = 1 gateway + 1 Mac worker。**
@@ -112,7 +114,7 @@
 
 | 模式 | 入口 | 适用 |
 |---|---|---|
-| 本地 | `http://127.0.0.1:<PORT>/api/...`，示例端口 `8792`（源码缺省端口 8793，以部署单元为准） | 同机脚本，或经隧道转到环回 |
+| 本地 | `http://127.0.0.1:<PORT>/api/...`。**端口以部署单元 / systemd `--port` 为准。** 产品化示例常用 `8792`；`trigger_gateway.py` 源码缺省是 `8793`。二者都不是唯一正确端口 | 同机脚本，或经隧道转到环回 |
 | 服务器 | `https://<GATEWAY_HOST>/<PREFIX>/api/...`，样板前缀 `/kaituan/` | 远程操作员。nginx 剥离前缀后转到 `127.0.0.1:<PORT>` |
 
 路径、方法、鉴权在两种入口下相同。不支持 query string。没有匿名 `/healthz`；探活用带凭证的 `GET /api/status`。操作员最低接口：`POST /api/login`、`POST /api/logout`、`GET /api/status`、`GET /api/tasks`、`POST /api/tasks`、`GET /api/tasks/<id>/audit`、`POST /api/tasks/<id>/cancel|resume|retry`。`/api/worker/*` **不对**操作员前端。
@@ -125,11 +127,13 @@
 |---|---|---|
 | 公网入口 | `https://gateway.example.com/kaituan/` | `https://gateway2.example.com/kaituan/` 或 `https://gateway.example.com/kaituan-b/` |
 | 服务器目录 | `/opt/kaituan-gateway/` | `/opt/kaituan-gateway-b/` |
-| 端口 | `8792` | `8794` |
+| 端口 | `8792`（示例） | `8794`（示例，与第一套不同即可） |
 | systemd 单元 | `kaituan-gateway.service` | `kaituan-gateway-b.service` |
 | `GATEWAY_WORKER_ID` / `--worker-id` | `mac-worker-1` | `mac-worker-2` |
 | token | 独立生成 | 独立生成 |
 | Mac | Mac A | Mac B（另一台 Mac） |
+
+两套端口都只是示例。每一套以自己的 systemd `--port` 为准，不要把 `8792` 或源码缺省 `8793` 当成唯一正确端口。
 
 禁止：让两个 gateway 指向同一台 Mac worker，或让一台 gateway 接两个 worker-id。
 
@@ -205,7 +209,7 @@ GATEWAY_WORKER_ID=mac-worker-1
 | 参数 | 说明 | 产品化取值 |
 |---|---|---|
 | `--bind` | 监听地址 | `127.0.0.1`（固定，不对公网） |
-| `--port` | 端口；**源码缺省 8793，以 systemd 单元为准** | `8792` |
+| `--port` | 监听端口。**以部署单元 / systemd `--port` 为准。** 源码缺省 `8793`。产品化示例常用 `8792`，不是唯一正确端口 | `8792`（示例） |
 | `--db` | 队列库（必填），新装为空库自动建表 | `<APP_DIR>/state/queue.sqlite3` |
 | `--static` | **OPTIONAL** 调试壳目录。不配也能只用 API。不是交付皮 | `<APP_DIR>/static` |
 
@@ -300,7 +304,7 @@ export KAITUAN_WORKER_ID=mac-worker-1
 | `<GATEWAY_HOST>` | 公网域名 | `gateway.example.com` |
 | `<PREFIX>` | 路径前缀（可改，改则 nginx / cookie_path / `--server` 三处同改） | `/kaituan/` |
 | `<APP_DIR>` | 安装目录 | `/opt/kaituan-gateway` |
-| `<PORT>` | 本机监听端口 | `8792` |
+| `<PORT>` | 本机监听端口。以部署单元 / systemd `--port` 为准。产品化示例常用 `8792`；源码缺省 `8793`；都不是唯一正确端口 | `8792` |
 | `<SVC_USER>` | 服务用户 | `kaituan` |
 | `<UNIT>` | systemd 单元名 | `kaituan-gateway` |
 
@@ -485,7 +489,7 @@ chmod 0600 work/trigger-worker/credentials.json
 
 > **新装必配。** 参数化合入见 [GitHub #4](https://github.com/a192289394-oss/kaituan-seckill/pull/4)（原 PR-3），**合入等 Mac 回归书面确认**。本 PR 不改 `trigger_launch.py`。
 
-合入前（本机临时修改，不提交）：把 `outputs/trigger_launch.py` 中 `'--server','…'` 改为你的入口（本地 `http://127.0.0.1:8792` 或 `https://gateway.example.com/kaituan`），`'--worker-id','…'` 改为 `'mac-worker-1'`。不要保留附录里的 `EXAMPLE_LIVE_ONLY` 值。
+合入前（本机临时修改，不提交）：把 `outputs/trigger_launch.py` 中 `'--server','…'` 改为你的入口（本地 `http://127.0.0.1:<PORT>`，或 `https://gateway.example.com/kaituan`），`'--worker-id','…'` 改为 `'mac-worker-1'`。`<PORT>` 与这套 systemd `--port` 相同；产品化示例常用 `8792`，源码缺省 `8793` 不是唯一正确端口。不要保留附录里的 `EXAMPLE_LIVE_ONLY` 值。
 合入后：用 5.6 节的 `KAITUAN_SERVER` / `KAITUAN_WORKER_ID` 或 `work/trigger-worker/launch.json`。
 
 ### 7.5 单次探测 → 常驻
@@ -593,7 +597,7 @@ tail -n 50 work/trigger-worker/stderr.log
 | 服务器 IP | `1.12.208.101` | `<GATEWAY_HOST>` 解析到你的服务器 |
 | 域名 | `www.zhoukenuan.top` | `gateway.example.com` |
 | 目录 | `/opt/uiautomator2-trigger/` | `<APP_DIR>`（示例 `/opt/kaituan-gateway`） |
-| systemd 单元 | `uiautomator2-trigger.service`，`User=ubuntu`，端口 `8792` | `<UNIT>` / `<SVC_USER>` / `<PORT>` |
+| systemd 单元 | `uiautomator2-trigger.service`，`User=ubuntu`，这一套的 `--port` 是 `8792`（`EXAMPLE_LIVE_ONLY`，不是唯一正确端口） | `<UNIT>` / `<SVC_USER>` / `<PORT>`（以你的部署单元为准；产品化示例常用 `8792`，源码缺省 `8793`） |
 | 路径前缀 | `/kaituan/` | `<PREFIX>`（可沿用 `/kaituan/`） |
 | worker-id | `zhongjiawei-mac-native` | `mac-worker-1` |
 | 登录 | nginx `auth_request` + site-entry；操作员路径 nginx 写死 `Authorization: Bearer <USER_TOKEN>`；worker 路径 `auth_request off` 透传 | 默认独立登录（第 6.6 节） |
