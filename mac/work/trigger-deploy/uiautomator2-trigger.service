@@ -1,3 +1,4 @@
+# EXAMPLE_LIVE_ONLY — production unit paths; new installs use server/kaituan-gateway.service.example
 [Unit]
 Description=Hotel task web gateway
 After=network-online.target

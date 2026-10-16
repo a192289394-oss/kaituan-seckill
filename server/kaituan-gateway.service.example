@@ -1,0 +1,27 @@
+# kaituan-gateway.service.example — parameterized unit for self-host
+# Placeholders: <SVC_USER> <APP_DIR> <PORT>
+# Source default port in trigger_gateway.py may be 8793; this unit wins — example uses 8792.
+
+[Unit]
+Description=Kaituan task web gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=<SVC_USER>
+Group=<SVC_USER>
+WorkingDirectory=<APP_DIR>
+EnvironmentFile=<APP_DIR>/gateway.env
+ExecStart=/usr/bin/python3 <APP_DIR>/trigger_gateway.py --bind 127.0.0.1 --port <PORT> --db <APP_DIR>/state/queue.sqlite3 --static <APP_DIR>/static
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=<APP_DIR>/state
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
