@@ -2,7 +2,7 @@
 
 对照产品化安装缺口（G1–G18）。本表只记状态，不改运行代码。
 
-> **对齐闸门：** 仓↔现网一致性仍是 `TODO(对齐后)`（架构师完成对齐之前为 open）。文档写了安装步骤或目标清单，**不得**记成「装完能力与现网一致」或「能力契约已等于现网」。
+> **硬约束：** 这是**目标对齐**；**仓↔现网对齐完成前不宣称**装完即具备现网能力；是否对齐以架构师仓↔现网哈希比对与验收（跟踪 issue / 相关 PR，如哈希验收 PR）为准。对齐完成前，本表不把「文档已写」记成能力已对齐。
 
 状态取值：`open` / `in this PR` / `blocked on other PR`。
 
@@ -17,7 +17,7 @@
 | G7 | 无空库新装与第二套说明 | in this PR | AI-INSTALL §3.3、§8.1 P10 |
 | G8 | 根 README 不指向安装文档 | in this PR | 第一屏为一句话、部署单元、三个安装链接 |
 | G9 | `deploy_gateway.py` 绑定现网 | blocked on other PR | 防误跑与横幅属后续 PR。本 PR 不改该脚本；AI-INSTALL 将其标为 `EXAMPLE_LIVE_ONLY`，新装走第 6 章 |
-| G10 | 能力契约散落 | in this PR | AI-INSTALL §4 收成**目标清单**，文首写明：对齐完成前不得把新人装完验收为能力等同现网。不另建契约文件。`TODO(对齐后)` 才可宣称该清单已等于现网。风控全文为 `docs/risk-rules.md` |
+| G10 | 能力契约散落 | in this PR | AI-INSTALL §4 收成**目标对齐**清单。仓↔现网对齐完成前不宣称装完即具备现网能力。是否对齐以架构师哈希比对与验收为准。不另建契约文件。风控全文为 `docs/risk-rules.md` |
 | G11 | worker-id 先到先绑定未写进文档 | in this PR | AI-INSTALL §5.1、§10 |
 | G12 | systemd 样板路径/用户写死在仓库样板文件 | blocked on other PR | `server/kaituan-gateway.service.example` 属后续 PR。AI-INSTALL §6.4 已给参数化单元正文 |
 | G13 | `*.bak*` 混在部署源 | blocked on other PR | 仓库卫生，本 PR 不删文件 |
