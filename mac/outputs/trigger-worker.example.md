@@ -2,7 +2,7 @@
 
 样例文件是 `trigger-worker.example.json`。这里只解释本机执行配置，不含网关地址、worker-id 或凭证。地址和 worker-id 见 `launch.example.json`，安装步骤见 docs/AI-INSTALL.md §7。
 
-新装时复制样例为 `mac/outputs/trigger-worker.json`，再按本机情况修改。样例里的 `autostart` 是 `false`。
+新装时复制样例为 `mac/outputs/trigger-worker.json`，再按本机情况修改。样例里的 `autostart` 是 `false`。不要提交复制后的文件。`trigger_launch.py` 找不到它就以非 0 退出。
 
 ## execution_max_age_seconds
 

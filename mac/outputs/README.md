@@ -15,11 +15,11 @@
 
 `install` 只注册 LaunchAgent 去执行 `run`。plist 不写入 server、worker-id 或 token。LaunchAgent 读不到交互 shell 里临时 export 的变量；常驻运行请把值写在本机 `launch.json`（建议权限 0600，只放在本机，不要提交）。
 
-本机执行参数在 `trigger-worker.json`。键说明见 `trigger-worker.example.md`。样例 `trigger-worker.example.json` 中 `autostart` 为 `false`，`adb_endpoint` 为 `127.0.0.1:5555`，`instance` 为 `Tiramisu64`。该文件不含聊天、机器人或通知配置。
+本机执行参数在 `trigger-worker.json`。键说明见 `trigger-worker.example.md`。样例 `trigger-worker.example.json` 中 `autostart` 为 `false`，`adb_endpoint` 为 `127.0.0.1:5555`，`instance` 为 `Tiramisu64`。该文件不含聊天、机器人或通知配置。仓库不提交 `trigger-worker.json`；`trigger_launch.py` 在 `run` / `probe` / `once` 时若找不到它，以非 0 退出。
 
 ## 运行结构
 
-- `trigger_gateway.py`：服务器 SQLite 队列，90 秒租约，固定单一 Mac，提交前两闸门；收单、补参、报告均幂等。页面把“Mac 收单在线”和 Android、root、来客 App、原生接口分别显示，不能再用心跳冒充执行环境可用。
+- 网关唯一源码是仓库 `server/trigger_gateway.py`（本目录不再放第二份可部署副本）：服务器 SQLite 队列，90 秒租约，固定单一 Mac，提交前两闸门；收单、补参、报告均幂等。页面把“Mac 收单在线”和 Android、root、来客 App、原生接口分别显示，不能再用心跳冒充执行环境可用。
 - `trigger_worker.py` / `execution_store.py`：本机独立任务库、原生一次提交日志、报告重发、取消隔离、独立心跳和 600 秒 watchdog。心跳每 60 秒做一次只读、限时的运行环境探测，不连接设备、不附加 Frida、不切商家、不读取业务数据。
 - `web_activity.py`：既有授权查重；过期模板预览；用户明确确认新档期后只授指定账号，保留商品价格及每达人库存。当前候选商品会完整翻页读取，平台未返回的禁选状态和价格语义保持“未知”，不会推成可用库存或实际成交价。
 - `native_plan*`：商品 POI 反查门店、主计划及草稿条款冻结、一次确认、独立双轮复核。
@@ -28,7 +28,7 @@
 
 ## 使用与验证
 
-粘贴开团计划或填写精确酒店与抖音号，默认只读。允许执行需勾选，或在原单明确确认。酒店名优先要求目录中的精确名称；仅当原输入零命中时，才可移除末尾一个 `秒杀` 或 `开团` 操作词，并且仍须唯一精确命中。相似店名和包含匹配不会自动放行。无生效秒杀模板时展示旧商品、原价、每达人库存；用户填写新档期后继续同一任务。北京时间明确换算为 epoch 秒。
+`kind=plan` 必须显式传 `allow_write: true`，否则网关返回 HTTP 400 `plan_write_required`，不会把这次下单改成写入，也不会改成静默只读单。`kind=authorization` 不带 `allow_write: true` 时只读。`kind=inspect` 始终只读。成功响应里的 `mode` 是 `write` 或 `read_only`。酒店名优先要求目录中的精确名称；仅当原输入零命中时，才可移除末尾一个 `秒杀` 或 `开团` 操作词，并且仍须唯一精确命中。相似店名和包含匹配不会自动放行。无生效秒杀模板时展示旧商品、原价、每达人库存；用户填写新档期后继续同一任务。北京时间明确换算为 epoch 秒。
 
 开团入口支持完整的来客下载分享链接、`snssdk299467://webview` 深链、官方开团详情 URL 和 18–20 位纯计划号。会沿官方 `redirect_url` 与 `url` 层逐层解码，并消除复制链接时插入的空白与换行；计划号保持字符串精度。不同计划号混入同一链接、非官方域名、异常编码和重复嵌套入口均拒绝提交。
 
@@ -39,9 +39,9 @@
 
 运行常驻时 probe 会因单机全局锁拒绝第二实例；可直接读服务器状态与本机 SQLite。不能将 Mac 心跳、Android 在线或 HTTP 200 视作业务成功。提交边界之后只读复核，取消不承诺撤销已发送请求，平台业务结果以独立读取为准。
 
-EXAMPLE_LIVE_ONLY：下面描述的是一套已部署环境的服务名、监听地址和公网路径，不是新装样板。新装见 docs/AI-INSTALL.md。
+新装见 docs/AI-INSTALL.md。不要把下面的历史服务名或端口抄进新环境。端口以那套 systemd `--port` 为准，nginx 转到同一个端口（样板 `<PORT>` 是 8792；源码缺省 8793 只在不写 `--port` 时生效）。
 
-服务器服务 `uiautomator2-trigger.service`，只监听 `127.0.0.1:8792`，公网经 HTTPS `/kaituan/`。重启和主站访问验证应检查实际内容，不能只看 HTTP 200。工作状态在 `work/trigger-worker/worker.sqlite3`，凭证与登录态不打包。
+EXAMPLE_LIVE_ONLY / 历史记录：曾经有一套服务名叫 `uiautomator2-trigger.service`，只监听环回上的一个固定端口，公网走 HTTPS 路径前缀。那不是新装样板，也不是 `kaituan-gateway.service.example`。重启和访问验证应检查实际内容，不能只看 HTTP 200。工作状态在 `work/trigger-worker/worker.sqlite3`，凭证与登录态不打包。本段不写现网 IP。
 
 仍需持续运行证据才可声称 24h 稳定。大酒店全量活动详情读取可能触发 600 秒 watchdog，应实测后优化，不能把 8 活动样本扩成所有酒店覆盖。
 
