@@ -12,6 +12,7 @@ from unittest.mock import Mock, patch
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "outputs"))
+import importlib.util
 import execution_store
 import native_backend
 import native_plan_journal
@@ -22,7 +23,11 @@ from native_plan_journal import PlanPermit
 import trigger_worker as w
 from native_http_api import safe_status_message
 from native_webview_api import SubmissionUncertain
-from trigger_gateway import GatewayStore, make_handler
+_GATEWAY = Path(__file__).resolve().parents[2] / "server" / "trigger_gateway.py"
+_spec = importlib.util.spec_from_file_location("trigger_gateway", _GATEWAY)
+_gw = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_gw)
+GatewayStore, make_handler = _gw.GatewayStore, _gw.make_handler
 
 PLAN = "9000000000000000123"
 CFG = {"serial": "127.0.0.1:5555", "max_task_age_seconds": 1800,
@@ -60,6 +65,21 @@ class WorkerTests(unittest.TestCase):
     def tearDown(self):
         self.isolated_lock.stop()
         self.temp.cleanup()
+
+    def test_risk_counters_persist_across_worker_restart(self):
+        self.worker.note_commit(["synthetic_1"])
+        self.worker.note_business_failure("failed")
+        self.worker._heal_attempts.append(time.time())
+        self.worker._heal_fail_streak = 1
+        self.worker._persist_risk_state()
+        restarted = w.Worker(w.WorkerStore(self.store.path), self.client, "mac-native-1", copy.deepcopy(CFG), "synthetic-adb")
+        self.assertEqual(len(restarted._commit_events), 1)
+        self.assertEqual(restarted._commit_events[0]["accounts"], ["synthetic_1"])
+        self.assertTrue(restarted.rate_limit_blocked())
+        self.assertEqual(restarted._fail_streak, 1)
+        self.assertEqual(restarted._heal_fail_streak, 1)
+        self.assertEqual(len(restarted._heal_attempts), 1)
+        self.assertEqual(restarted._ready_streak, 0)
 
     def reply(self, path, body):
         if path.endswith("/claim"):
@@ -787,7 +807,10 @@ class GatewayHTTPTests(unittest.TestCase):
         self.temp.cleanup()
 
     def test_actual_http_claim_report_and_idempotent_replay(self):
-        self.gateway.create({"request_id": "synthetic-request", "kind": "plan", "plan_id": PLAN, "allow_write": False})
+        with self.assertRaises(_gw.APIError) as missing:
+            self.gateway.create({"request_id": "synthetic-omit", "kind": "plan", "plan_id": PLAN})
+        self.assertEqual(missing.exception.code, "plan_write_required")
+        self.gateway.create({"request_id": "synthetic-request", "kind": "plan", "plan_id": PLAN, "allow_write": True})
         with patch.object(native_backend, "plan", return_value={"status": "succeeded", "text": "independent read", "reviews": [{}, {}]}) as backend:
             self.assertTrue(self.worker.run_once())
         self.assertFalse(backend.call_args.args[1]["auto_submit"])

@@ -897,19 +897,96 @@ class Worker:
         self._runtime_health = None
         self._runtime_health_at = 0.0
         self._fail_streak = 0
-        self._fail_events = []  # monotonic timestamps of business failures
-        self._fail_hold_until = 0.0  # monotonic; hold writes after K failures
-        self._ready_streak = 0
+        self._fail_events = []  # wall-clock timestamps; persisted in execution_store
+        self._fail_hold_until = 0.0  # wall clock; hold writes after K failures
+        self._ready_streak = 0  # memory only; restart must re-earn resume
         self._heal_last = None
         self._heal_fail_streak = 0
-        self._heal_attempts = []  # monotonic timestamps within last hour
+        self._heal_attempts = []  # wall-clock timestamps within the last hour
         self._healing = False
-        self._commit_events = []  # {at: monotonic, accounts: [str]}
+        self._commit_events = []  # {at: wall clock, accounts: [str]}
         self._last_commit_at = 0.0
         self._rate_limited = False
+        self._load_risk_state()
+
+    def _finite_times(self, values, *, now, window):
+        out = []
+        cutoff = now - window
+        for item in values or []:
+            try:
+                ts = float(item)
+            except (TypeError, ValueError):
+                continue
+            if math.isfinite(ts) and cutoff <= ts <= now + 5:
+                out.append(min(ts, now))
+        return out
+
+    def _load_risk_state(self):
+        loader = getattr(self.store, "load_risk_state", None)
+        data = loader() if loader else None
+        if not isinstance(data, dict):
+            return
+        now = time.time()
+        self._fail_events = self._finite_times(data.get("fail_events"), now=now, window=FAIL_STREAK_WINDOW_SECONDS)
+        try:
+            hold = float(data.get("fail_hold_until") or 0)
+        except (TypeError, ValueError):
+            hold = 0.0
+        if not math.isfinite(hold) or hold <= now:
+            hold = 0.0
+        elif hold > now + FAIL_STREAK_WINDOW_SECONDS:
+            hold = now + FAIL_STREAK_WINDOW_SECONDS
+        self._fail_hold_until = hold
+        self._prune_fail_events()
+        commits = []
+        for event in data.get("commit_events") or []:
+            if not isinstance(event, dict):
+                continue
+            try:
+                at = float(event.get("at"))
+            except (TypeError, ValueError):
+                continue
+            if not math.isfinite(at) or at < now - 3600 or at > now + 5:
+                continue
+            accounts = [a for a in (event.get("accounts") or []) if isinstance(a, str) and a][:40]
+            commits.append({"at": min(at, now), "accounts": accounts})
+        self._commit_events = commits
+        try:
+            last = float(data.get("last_commit_at") or 0)
+        except (TypeError, ValueError):
+            last = 0.0
+        if not math.isfinite(last) or last <= 0 or last < now - 3600:
+            last = 0.0
+        elif last > now + 5:
+            last = now
+        self._last_commit_at = last
+        self._prune_commit_events()
+        self._heal_attempts = self._finite_times(data.get("heal_attempts"), now=now, window=3600)
+        try:
+            streak = int(data.get("heal_fail_streak") or 0)
+        except (TypeError, ValueError):
+            streak = 0
+        self._heal_fail_streak = max(0, min(streak, 100))
+
+    def _persist_risk_state(self):
+        saver = getattr(self.store, "save_risk_state", None)
+        if not saver:
+            return
+        self._prune_fail_events()
+        self._prune_commit_events()
+        now = time.time()
+        self._heal_attempts = [t for t in self._heal_attempts if now - t < 3600]
+        saver({
+            "fail_events": list(self._fail_events),
+            "fail_hold_until": self._fail_hold_until,
+            "commit_events": list(self._commit_events),
+            "last_commit_at": self._last_commit_at,
+            "heal_attempts": list(self._heal_attempts),
+            "heal_fail_streak": int(self._heal_fail_streak or 0),
+        })
 
     def _prune_fail_events(self):
-        cutoff = time.monotonic() - FAIL_STREAK_WINDOW_SECONDS
+        cutoff = time.time() - FAIL_STREAK_WINDOW_SECONDS
         self._fail_events = [t for t in self._fail_events if t >= cutoff]
         self._fail_streak = len(self._fail_events)
 
@@ -920,27 +997,29 @@ class Worker:
             return
         if status not in ("failed", "waiting_device"):
             return
-        now = time.monotonic()
+        now = time.time()
         self._fail_events.append(now)
         self._prune_fail_events()
         self._ready_streak = 0
         if self._fail_streak >= FAIL_STREAK_K:
             self._fail_hold_until = max(self._fail_hold_until, now + FAIL_STREAK_WINDOW_SECONDS)
+        self._persist_risk_state()
 
     def note_business_success(self):
         """A clean success clears the rolling failure window."""
         self._fail_events.clear()
         self._fail_streak = 0
         self._fail_hold_until = 0.0
+        self._persist_risk_state()
 
     def _prune_commit_events(self):
-        cutoff = time.monotonic() - 3600
+        cutoff = time.time() - 3600
         self._commit_events = [e for e in self._commit_events if e.get("at", 0) >= cutoff]
 
     def rate_limit_blocked(self, accounts=None):
         """Return True when writer must wait (interval / per-account / machine caps)."""
         self._prune_commit_events()
-        now = time.monotonic()
+        now = time.time()
         if self._last_commit_at and now - self._last_commit_at < WRITE_MIN_INTERVAL_SECONDS:
             return True
         if len(self._commit_events) >= WRITE_PER_MACHINE_PER_HOUR:
@@ -953,15 +1032,16 @@ class Worker:
         return False
 
     def note_commit(self, accounts=None):
-        now = time.monotonic()
+        now = time.time()
         rows = [a for a in (accounts or []) if isinstance(a, str) and a]
         self._commit_events.append({"at": now, "accounts": rows})
         self._last_commit_at = now
         self._prune_commit_events()
+        self._persist_risk_state()
 
     def _refresh_ready_streak(self, env_hard_ok):
         """Resume after fail-hold only when hard-ready for N consecutive probes."""
-        now = time.monotonic()
+        now = time.time()
         if now < self._fail_hold_until:
             self._ready_streak = 0
             return
@@ -975,11 +1055,12 @@ class Worker:
             self._fail_streak = 0
             self._fail_hold_until = 0.0
             self._ready_streak = 0
+            self._persist_risk_state()
 
     def _residency_kwargs(self):
         self._prune_fail_events()
         effective_fail = self._fail_streak
-        if time.monotonic() < self._fail_hold_until:
+        if time.time() < self._fail_hold_until:
             effective_fail = max(effective_fail, FAIL_STREAK_K)
         # Machine-level rate preview for top bar (no account list).
         self._rate_limited = self.rate_limit_blocked()
@@ -1140,7 +1221,7 @@ class Worker:
         return runtime
 
     def _heal_budget_ok(self):
-        now = time.monotonic()
+        now = time.time()
         self._heal_attempts = [t for t in self._heal_attempts if now - t < 3600]
         return len(self._heal_attempts) < HEAL_MAX_PER_HOUR
 
@@ -1162,7 +1243,8 @@ class Worker:
         if not hard and not soft:
             return None
         plan = hard + soft
-        self._heal_attempts.append(time.monotonic())
+        self._heal_attempts.append(time.time())
+        self._persist_risk_state()
         self._healing = True
         try:
             log_event("heal_start", action="+".join(plan),
@@ -1181,6 +1263,7 @@ class Worker:
         log_event("heal_done", ok=bool(result.get("ok")), action=result.get("action"),
                   reason=str(result.get("reason", ""))[:160],
                   heal_fail_streak=self._heal_fail_streak)
+        self._persist_risk_state()
         return result
 
     def runtime_health(self, probe=True):
@@ -1557,6 +1640,11 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if not re.fullmatch(r"[A-Za-z0-9_.-]{1,80}", args.worker_id):
         parser.error("Invalid worker ID")
+    if not args.config.is_file():
+        parser.error(
+            f"worker config not found: {args.config}. "
+            "Copy trigger-worker.example.json to this path; do not commit the copy."
+        )
     cfg = load_config(args.config)
     client = GatewayClient(args.server, os.environ.get("GATEWAY_WORKER_TOKEN", ""), ca_file=args.ca_file)
     with global_worker_lock():
