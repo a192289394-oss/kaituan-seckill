@@ -89,14 +89,25 @@ def resolve_launch():
     return server, worker_id, ca_file
 
 
+def worker_config_path():
+    return ROOT / 'outputs/trigger-worker.json'
+
+
 def arguments(action=None):
     server, worker_id, ca_file = resolve_launch()
+    config = worker_config_path()
+    if not config.is_file():
+        fail(
+            f'缺少本机执行配置 {config}。\n'
+            '请将 mac/outputs/trigger-worker.example.json 复制为该路径后再启动。'
+            '仓库不提交这份运行态文件；找不到配置时启动器以非 0 退出。'
+        )
     args = [
         str(ROOT / '.venv/bin/python'),
         str(ROOT / 'outputs/trigger_worker.py'),
         '--server', server,
         '--worker-id', worker_id,
-        '--config', str(ROOT / 'outputs/trigger-worker.json'),
+        '--config', str(config),
         '--catalog-db', str(STATE / 'catalog.sqlite3'),
     ]
     if ca_file:
