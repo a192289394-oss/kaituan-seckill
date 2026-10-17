@@ -101,6 +101,26 @@ class Store:
         with self.connect() as db:
             db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (key, str(value)))
 
+    def load_risk_state(self):
+        """Return persisted writer risk counters, or None when unset."""
+        with self.connect() as db:
+            row = db.execute("SELECT value FROM meta WHERE key='risk_counters'").fetchone()
+        if not row or not row[0]:
+            return None
+        try:
+            data = json.loads(row[0])
+        except json.JSONDecodeError:
+            return None
+        return data if isinstance(data, dict) else None
+
+    def save_risk_state(self, state):
+        """Persist fail-streak, write-rate, and heal counters across restarts."""
+        if not isinstance(state, dict):
+            raise ValueError("risk state must be an object")
+        blob = json.dumps(state, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+        with self.connect() as db:
+            db.execute("INSERT OR REPLACE INTO meta VALUES('risk_counters',?)", (blob,))
+
     def record_review(self, run_id, attempt, task, hotel, observation):
         with self.connect() as db:
             db.execute("INSERT INTO result_reviews VALUES(?,?,?,?,?,?,?)",

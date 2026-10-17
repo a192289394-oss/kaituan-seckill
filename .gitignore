@@ -11,3 +11,6 @@
 **/*.pyc
 **/*.bak-*
 .DS_Store
+
+# Local Mac worker runtime config. Copy trigger-worker.example.json; do not commit.
+mac/outputs/trigger-worker.json

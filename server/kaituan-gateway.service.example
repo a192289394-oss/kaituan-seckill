@@ -1,6 +1,9 @@
 # kaituan-gateway.service.example — parameterized unit for self-host
 # Placeholders: <SVC_USER> <APP_DIR> <PORT>
-# Source default port in trigger_gateway.py may be 8793; this unit wins — example uses 8792.
+# 端口规则：本单元的 --port <PORT> 是这套部署的唯一监听端口。nginx proxy_pass 必须转到同一个 <PORT>。
+# 样板把 <PORT> 写成 8792。不写 --port 直接跑 trigger_gateway.py 时源码缺省是 8793；
+# 只有本单元也写成 8793，nginx 才能指到 8793。
+# <SVC_USER> 是专用非特权用户，且必须能写 <APP_DIR>/state。
 
 [Unit]
 Description=Kaituan task web gateway
@@ -22,6 +25,8 @@ ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=<APP_DIR>/state
 PrivateTmp=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 
 [Install]
 WantedBy=multi-user.target

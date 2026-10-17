@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import hmac
+import ipaddress
 import json
 import math
 import mimetypes
@@ -95,8 +96,12 @@ def validate_payload(body):
         raise APIError(400, "write_conflict", "allow_write and read_only conflict")
     if not allow_write:
         read_only = True
-    # Plan submit means execute: ignore client allow_write=false / confirm UX.
+    # kind=plan is a write only when the caller sets allow_write to true.
+    # Omitting the flag or sending false is rejected; the gateway does not
+    # rewrite the request into a write or into a silent read-only plan.
     if kind == "plan":
+        if body.get("allow_write") is not True:
+            raise APIError(400, "plan_write_required", "kind=plan requires explicit allow_write=true")
         allow_write = True
         read_only = False
     if kind == "inspect":
@@ -214,6 +219,7 @@ class GatewayStore:
                     committed=bool(row["committed"]), cancel_requested=bool(row["cancel_requested"]),
                     result=json.loads(row["result"]) if row["result"] else None,
                     details=json.loads(row["details"]) if row["details"] else None)
+        task["mode"] = "write" if task["payload"].get("allow_write") is True and not task["read_only"] else "read_only"
         if claim:
             task.update(lease_token=row["lease_token"], lease_until=row["lease_until"])
         return task
@@ -580,6 +586,43 @@ class GatewayStore:
             conn.execute("DELETE FROM sessions WHERE hash=?", (hashlib.sha256(value.encode()).hexdigest(),))
 
 
+def _parse_ip(value):
+    if not isinstance(value, str):
+        return None
+    text = value.strip()
+    if not text or any(ch.isspace() or ch == "," for ch in text):
+        return None
+    try:
+        return ipaddress.ip_address(text)
+    except ValueError:
+        return None
+
+
+def _is_loopback(ip):
+    mapped = getattr(ip, "ipv4_mapped", None)
+    return (mapped or ip).is_loopback
+
+
+def login_client_ip(peer, x_real_ip):
+    """Bucket login attempts by client IP.
+
+    Trust X-Real-IP only when the TCP peer is loopback (the local reverse
+    proxy). Ignore X-Forwarded-For entirely: a client can prepend it, and
+    nginx's $proxy_add_x_forwarded_for keeps that prefix. A non-loopback peer
+    is used as-is so a spoofed X-Real-IP cannot split or dodge the bucket.
+    """
+    peer_ip = _parse_ip(peer)
+    if peer_ip is not None and _is_loopback(peer_ip):
+        real = _parse_ip(x_real_ip)
+        if real is not None:
+            mapped = getattr(real, "ipv4_mapped", None)
+            return str(mapped or real)
+    if peer_ip is None:
+        return str(peer)
+    mapped = getattr(peer_ip, "ipv4_mapped", None)
+    return str(mapped or peer_ip)
+
+
 def make_handler(store, user_token, worker_token, *, public_origin, allowed_hosts=None, static=None, cookie_path="/"):
     parsed = urlsplit(public_origin)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.path not in {"", "/"} or parsed.query or parsed.fragment:
@@ -641,6 +684,10 @@ def make_handler(store, user_token, worker_token, *, public_origin, allowed_host
                 raise APIError(400, "body", "JSON object required")
             return body
 
+        def _session_cookie(self, value, max_age):
+            flags = "; Secure" if parsed.scheme == "https" else ""
+            return f"gateway_session={value}; Path={cookie_path}; Max-Age={max_age}; HttpOnly; SameSite=Strict{flags}"
+
         def _cookie(self):
             try:
                 cookie = SimpleCookie(self.headers.get("Cookie", ""))
@@ -662,7 +709,7 @@ def make_handler(store, user_token, worker_token, *, public_origin, allowed_host
         def _login(self, body):
             self._host_origin(require_origin=True)
             now = store.clock()
-            ip = self.client_address[0]
+            ip = login_client_ip(self.client_address[0], self.headers.get("X-Real-IP"))
             with attempts_lock:
                 attempts = [at for at in login_attempts.get(ip, []) if now - at < 600]
                 if len(attempts) >= 10:
@@ -673,8 +720,7 @@ def make_handler(store, user_token, worker_token, *, public_origin, allowed_host
             if not token_equal(candidate, user_token):
                 raise APIError(401, "unauthorized", "Authentication required")
             session = store.session_create()
-            flags = "; Secure" if parsed.scheme == "https" else ""
-            self._json(200, {"ok": True}, {"Set-Cookie": f"gateway_session={session}; Path={cookie_path}; Max-Age={SESSION_SECONDS}; HttpOnly; SameSite=Strict{flags}"})
+            self._json(200, {"ok": True}, {"Set-Cookie": self._session_cookie(session, SESSION_SECONDS)})
 
         def _dispatch(self, method):
             self._host_origin()
@@ -700,7 +746,7 @@ def make_handler(store, user_token, worker_token, *, public_origin, allowed_host
                         result = store.create(body)
                     elif path == "/api/logout":
                         store.session_remove(self._cookie())
-                        self._json(200, {"ok": True}, {"Set-Cookie": f"gateway_session=; Path={cookie_path}; Max-Age=0; HttpOnly; SameSite=Strict"})
+                        self._json(200, {"ok": True}, {"Set-Cookie": self._session_cookie("", 0)})
                         return
                     elif path == "/api/worker/claim":
                         result = store.claim(body.get("worker_id"))
@@ -770,7 +816,10 @@ def main():
     if not public_origin:
         parser.error("GATEWAY_PUBLIC_ORIGIN is required")
     hosts = [h.strip() for h in os.environ.get("GATEWAY_ALLOWED_HOSTS", urlsplit(public_origin).netloc).split(",") if h.strip()]
-    store = GatewayStore(args.db, worker_id=os.environ.get("GATEWAY_WORKER_ID"), secret_values=(user_token, worker_token))
+    worker_id = (os.environ.get("GATEWAY_WORKER_ID") or "").strip()
+    if not WORKER_ID.fullmatch(worker_id or ""):
+        parser.error("GATEWAY_WORKER_ID is required and must match ^[A-Za-z0-9_.:-]{1,96}$; refusing first-connect bind")
+    store = GatewayStore(args.db, worker_id=worker_id, secret_values=(user_token, worker_token))
     handler = make_handler(store, user_token, worker_token, public_origin=public_origin, allowed_hosts=hosts, static=args.static,
                            cookie_path=os.environ.get("GATEWAY_COOKIE_PATH", "/"))
     server = ThreadingHTTPServer((args.bind, args.port), handler)

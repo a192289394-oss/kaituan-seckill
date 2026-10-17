@@ -8,7 +8,11 @@
 
 目的：让**别的 Mac**跑通这条链路。主交付 = 说明文档 + 可运行源码 + 标准接口（对方自写前端）。一套 = **1 个 gateway + 1 个 Mac worker**。要互不影响的第二套，就再装一套。
 
-对接二选一，契约相同：本地 `http://127.0.0.1:<PORT>`，或服务器 `https://host/<前缀>/api/...`（样板前缀 `/kaituan/`）。**端口以部署单元 / systemd `--port` 为准。** 产品化示例常用 `8792`；`trigger_gateway.py` 源码缺省是 `8793`。二者都不是唯一正确端口。`/api/worker/*` 不对前端。仓内静态页是 **OPTIONAL 调试壳 / 非交付皮**。
+对接二选一，契约相同：本地 `http://127.0.0.1:<PORT>`，或服务器 `https://host/<前缀>/api/...`（样板前缀 `/kaituan/`）。
+
+**端口规则：** 一套部署只有一个监听端口，就是该套 systemd 单元里的 `--port <PORT>`。nginx `proxy_pass` 必须转到同一个 `<PORT>`。样板里的 `8792` 只是这个 `<PORT>` 的示例值。`server/trigger_gateway.py` 不写 `--port` 时源码缺省监听 `8793`；只有 systemd 也写成 `8793`，nginx 才能指到 `8793`。
+
+`/api/worker/*` 不对前端。仓内静态页是 **OPTIONAL 调试壳 / 非交付皮**。网关唯一源码是 `server/trigger_gateway.py`。
 
 ## 安装
 

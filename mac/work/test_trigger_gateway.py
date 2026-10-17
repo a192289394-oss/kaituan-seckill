@@ -1,6 +1,7 @@
 import concurrent.futures
 import importlib.util
 import json
+import os
 import re
 import subprocess
 import sys
@@ -12,7 +13,7 @@ import urllib.request
 from http.server import ThreadingHTTPServer
 from pathlib import Path
 
-SOURCE = Path(__file__).resolve().parents[1] / 'outputs' / 'trigger_gateway.py'
+SOURCE = Path(__file__).resolve().parents[2] / 'server' / 'trigger_gateway.py'
 SPEC = importlib.util.spec_from_file_location('trigger_gateway', SOURCE)
 gw = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(gw)
@@ -36,7 +37,16 @@ class StoreTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
     def create(self, **extra):
-        return self.store.create(dict(request_id='request-1', kind='plan', plan_id='1234567890123456789', **extra))['task']
+        body = dict(request_id='request-1', kind='plan', plan_id='1234567890123456789', allow_write=True)
+        body.update(extra)
+        return self.store.create(body)['task']
+    def legacy_read_only(self, task):
+        """Seed a stored read-only plan. New creates cannot omit allow_write."""
+        with self.store.tx() as conn:
+            payload = json.loads(conn.execute("SELECT payload FROM tasks WHERE id=?", (task['id'],)).fetchone()['payload'])
+            payload.update(allow_write=False, read_only=True)
+            conn.execute("UPDATE tasks SET payload=?, read_only=1 WHERE id=?", (gw.canonical(payload), task['id']))
+        return task
     def claim(self):
         return self.store.claim('mac-one')['task']
     def body(self, task, **extra):
@@ -60,24 +70,31 @@ class StoreTests(unittest.TestCase):
         claim=self.store.claim('mac-one')['task']
         with self.assertRaises(gw.APIError):self.store.retry(task['id'],{'expected_revision':1})
 
-    def test_default_is_read_only_and_id_preserves_precision(self):
+    def test_plan_requires_explicit_write_and_echoes_mode(self):
+        self.error('plan_write_required', lambda: self.store.create(dict(request_id='omitted', kind='plan', plan_id='1234567890123456789')))
+        self.error('plan_write_required', lambda: self.store.create(dict(request_id='off', kind='plan', plan_id='1234567890123456789', allow_write=False)))
         task = self.create()
-        self.assertTrue(task['read_only'])
+        self.assertFalse(task['read_only'])
+        self.assertEqual(task['mode'], 'write')
         self.assertEqual(task['payload']['plan_id'], '1234567890123456789')
-        self.error('plan_id', lambda: self.store.create(dict(request_id='bad', kind='plan', plan_id=1234567890123456789)))
-        self.error('plan_id', lambda: self.store.create(dict(request_id='bad', kind='plan', plan_id='123')))
+        auth = self.store.create(dict(request_id='auth-ro', kind='authorization', hotel='Hotel', accounts=['account-1']))['task']
+        self.assertTrue(auth['read_only'])
+        self.assertEqual(auth['mode'], 'read_only')
+        self.assertFalse(auth['payload']['allow_write'])
+        self.error('plan_id', lambda: self.store.create(dict(request_id='bad', kind='plan', plan_id=1234567890123456789, allow_write=True)))
+        self.error('plan_id', lambda: self.store.create(dict(request_id='bad', kind='plan', plan_id='123', allow_write=True)))
 
     def test_exact_id_and_business_duplicate_alias_remain_idempotent(self):
         task = self.create(allow_write=True)
         duplicate = self.store.create(dict(request_id='request-2', kind='plan', plan_id='1234567890123456789', allow_write=True))
         self.assertTrue(duplicate['business_duplicate'])
         self.assertEqual(task['id'], duplicate['task']['id'])
-        self.error('request_conflict', lambda: self.store.create(dict(request_id='request-2', kind='plan', plan_id='1234567890123456780')))
+        self.error('request_conflict', lambda: self.store.create(dict(request_id='request-2', kind='plan', plan_id='1234567890123456780', allow_write=True)))
         self.assertTrue(self.store.create(dict(request_id='request-1', kind='plan', plan_id='1234567890123456789', allow_write=True))['duplicate'])
 
     def test_concurrent_duplicate_only_one_task(self):
         with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
-            results = list(pool.map(lambda i: self.store.create(dict(request_id=f'request-{i}', kind='plan', plan_id='1234567890123456789')), range(10)))
+            results = list(pool.map(lambda i: self.store.create(dict(request_id=f'request-{i}', kind='plan', plan_id='1234567890123456789', allow_write=True)), range(10)))
         self.assertEqual(len({r['task']['id'] for r in results}), 1)
         self.assertEqual(len(self.store.list_tasks()['tasks']), 1)
 
@@ -116,7 +133,7 @@ class StoreTests(unittest.TestCase):
         first = self.create()
         claim = self.claim()
         self.report(claim)
-        duplicate = self.store.create(dict(request_id='request-2', kind='plan', plan_id='1234567890123456789'))
+        duplicate = self.store.create(dict(request_id='request-2', kind='plan', plan_id='1234567890123456789', allow_write=True))
         self.assertTrue(duplicate['business_duplicate'])
         self.assertEqual(first['id'], duplicate['task']['id'])
 
@@ -371,7 +388,7 @@ class StoreTests(unittest.TestCase):
         self.error('preview_changed', lambda: self.store.resume(task['id'], {'expected_revision': 1, 'params': params}))
 
     def test_read_only_plan_explicit_approval_same_task_and_idempotent_revision(self):
-        self.create()
+        self.legacy_read_only(self.create())
         task = self.claim()
         self.report(task, 'needs_input', details={'reason': 'approval_required'})
         body = {'expected_revision': 1, 'params': {'confirmed': True, 'action': 'approve_plan'}}
@@ -387,7 +404,7 @@ class StoreTests(unittest.TestCase):
         self.error('stale_revision', lambda: self.store.resume(task['id'], {**body, 'params': {'note': 'Different'}}))
 
     def test_plan_approval_requires_strict_confirmation_and_optional_preview_fingerprint(self):
-        self.create()
+        self.legacy_read_only(self.create())
         task = self.claim()
         self.report(task, 'needs_input', details={'preview': {'fingerprint': 'a' * 64}})
         params = {'confirmed': True, 'action': 'approve_plan'}
@@ -398,7 +415,7 @@ class StoreTests(unittest.TestCase):
         self.assertFalse(self.store.resume(task['id'], {'expected_revision': 1, 'params': {**params, 'fingerprint': 'a' * 64}})['task']['read_only'])
 
     def test_plan_approval_cannot_revive_expired_or_committed_task(self):
-        self.create()
+        self.legacy_read_only(self.create())
         task = self.claim()
         self.report(task, 'needs_input')
         self.clock.advance(86401)
@@ -477,8 +494,45 @@ class HTTPTests(unittest.TestCase):
         self.assertEqual(self.req('/api/tasks', body, headers={'Cookie': cookie})[0], 403)
         self.assertEqual(self.req('/api/tasks', body, headers={'Cookie': cookie, 'Origin': 'https://example.test'})[0], 200)
         self.assertEqual(self.req('/api/worker/claim', {'worker_id': 'mac'}, headers={'Cookie': cookie})[0], 401)
-        self.assertEqual(self.req('/api/logout', {}, headers={'Cookie': cookie, 'Origin': 'https://example.test'})[0], 200)
+        code, headers, result = self.req('/api/logout', {}, headers={'Cookie': cookie, 'Origin': 'https://example.test'})
+        self.assertEqual(code, 200)
+        self.assertIn('Secure', headers['Set-Cookie'])
         self.assertEqual(self.req('/api/tasks', headers={'Cookie': cookie})[0], 401)
+
+    def test_plan_post_requires_allow_write_and_echoes_mode(self):
+        code, _, body = self.req('/api/tasks', {'request_id': 'plan-omit', 'kind': 'plan', 'plan_id': '1234567890123456789'}, token='user-token')
+        self.assertEqual(code, 400)
+        self.assertEqual(body['error'], 'plan_write_required')
+        code, _, body = self.req('/api/tasks', {'request_id': 'plan-write', 'kind': 'plan', 'plan_id': '1234567890123456789', 'allow_write': True}, token='user-token')
+        self.assertEqual(code, 200)
+        self.assertEqual(body['task']['mode'], 'write')
+        self.assertFalse(body['task']['read_only'])
+
+    def test_login_rate_limit_trusts_loopback_x_real_ip_only(self):
+        self.assertEqual(gw.login_client_ip('127.0.0.1', '203.0.113.8'), '203.0.113.8')
+        self.assertEqual(gw.login_client_ip('::1', '203.0.113.8'), '203.0.113.8')
+        self.assertEqual(gw.login_client_ip('127.0.0.1', '203.0.113.8, 198.51.100.1'), '127.0.0.1')
+        self.assertEqual(gw.login_client_ip('127.0.0.1', None), '127.0.0.1')
+        self.assertEqual(gw.login_client_ip('203.0.113.5', '198.51.100.1'), '203.0.113.5')
+        spoof = {'Origin': 'https://example.test', 'X-Forwarded-For': '198.51.100.50'}
+        for _ in range(10):
+            self.assertEqual(self.req('/api/login', {'token': 'nope'}, headers={**spoof, 'X-Real-IP': '203.0.113.10'})[0], 401)
+        self.assertEqual(self.req('/api/login', {'token': 'nope'}, headers={**spoof, 'X-Real-IP': '203.0.113.10'})[0], 429)
+        self.assertEqual(self.req('/api/login', {'token': 'user-token'}, headers={'Origin': 'https://example.test', 'X-Real-IP': '203.0.113.11', 'X-Forwarded-For': '203.0.113.10'})[0], 200)
+
+    def test_gateway_refuses_start_without_worker_id(self):
+        env = os.environ.copy()
+        env.pop('GATEWAY_WORKER_ID', None)
+        env['GATEWAY_USER_TOKEN'] = 'user-token-value'
+        env['GATEWAY_WORKER_TOKEN'] = 'worker-token-value'
+        env['GATEWAY_PUBLIC_ORIGIN'] = 'https://example.test'
+        with tempfile.TemporaryDirectory() as temp:
+            proc = subprocess.run([sys.executable, str(SOURCE), '--db', str(Path(temp) / 'queue.sqlite3')],
+                                   env=env, capture_output=True, text=True)
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn('GATEWAY_WORKER_ID', proc.stderr)
+        self.assertNotIn('user-token-value', proc.stderr)
+        self.assertNotIn('worker-token-value', proc.stderr)
 
     def test_invalid_json_rejected_and_no_secret_echo(self):
         code, headers, result = self.req('/api/login', {'token': '\u79d8\u5bc6'}, headers={'Origin': 'https://example.test'})

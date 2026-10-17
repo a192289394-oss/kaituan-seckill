@@ -101,7 +101,7 @@
  └──────────────────────────────────────────────────────────────────────┘
 ```
 
-图中的 `8792` 是产品化示例，不是唯一正确端口。实际监听端口以该部署单元的 systemd `--port` 为准。`trigger_gateway.py` 不带 `--port` 时，源码缺省是 `8793`。
+**端口规则：** 一套部署只有一个监听端口，就是该套 systemd 单元里的 `--port <PORT>`。nginx `proxy_pass` 必须转到同一个 `<PORT>`。上图和样板里的 `8792` 只是这个 `<PORT>` 的示例值。`server/trigger_gateway.py` 不写 `--port` 时源码缺省监听 `8793`；只有 systemd 也写成 `8793`，nginx 才能指到 `8793`。
 
 ### 3.2 部署单元定义
 
@@ -114,7 +114,7 @@
 
 | 模式 | 入口 | 适用 |
 |---|---|---|
-| 本地 | `http://127.0.0.1:<PORT>/api/...`。**端口以部署单元 / systemd `--port` 为准。** 产品化示例常用 `8792`；`trigger_gateway.py` 源码缺省是 `8793`。二者都不是唯一正确端口 | 同机脚本，或经隧道转到环回 |
+| 本地 | `http://127.0.0.1:<PORT>/api/...`。端口见 §3.1 端口规则：systemd `--port` 与 nginx 同一个 `<PORT>`；样板 `8792`；源码缺省 `8793` 只在不写 `--port` 时生效 | 同机脚本，或经隧道转到环回 |
 | 服务器 | `https://<GATEWAY_HOST>/<PREFIX>/api/...`，样板前缀 `/kaituan/` | 远程操作员。nginx 剥离前缀后转到 `127.0.0.1:<PORT>` |
 
 路径、方法、鉴权在两种入口下相同。不支持 query string。没有匿名 `/healthz`；探活用带凭证的 `GET /api/status`。操作员最低接口：`POST /api/login`、`POST /api/logout`、`GET /api/status`、`GET /api/tasks`、`POST /api/tasks`、`GET /api/tasks/<id>/audit`、`POST /api/tasks/<id>/cancel|resume|retry`。`/api/worker/*` **不对**操作员前端。
@@ -133,7 +133,7 @@
 | token | 独立生成 | 独立生成 |
 | Mac | Mac A | Mac B（另一台 Mac） |
 
-两套端口都只是示例。每一套以自己的 systemd `--port` 为准，不要把 `8792` 或源码缺省 `8793` 当成唯一正确端口。
+两套端口都只是示例。每一套遵守 §3.1 端口规则：自己的 systemd `--port` 与自己的 nginx `<PORT>` 相同。
 
 禁止：让两个 gateway 指向同一台 Mac worker，或让一台 gateway 接两个 worker-id。
 
@@ -148,7 +148,7 @@
 | 能力 | 契约 |
 |---|---|
 | 下单 | `POST /api/tasks`。`kind` 见 §4.2。自写前端或脚本均可。调试壳上的表单不是交付皮。 |
-| 开团 | `kind=plan`。支持来客下载分享链接、`snssdk299467://webview` 深链、官方开团详情 URL、18–20 位纯计划号。逐层解码官方 `redirect_url`/`url`，计划号以字符串保留精度；异域名、混入不同计划号、异常编码、重复嵌套 → 拒绝。开团导航会进入销帮。 |
+| 开团 | `kind=plan`。必须显式 `allow_write: true`，否则 HTTP 400 `plan_write_required`。网关不会把缺省或 `false` 改写成写入，也不会改写成静默只读单。成功响应的任务带 `mode`：`write` 或 `read_only`。支持来客下载分享链接、`snssdk299467://webview` 深链、官方开团详情 URL、18–20 位纯计划号。逐层解码官方 `redirect_url`/`url`，计划号以字符串保留精度；异域名、混入不同计划号、异常编码、重复嵌套 → 拒绝。开团导航会进入销帮。 |
 | 秒杀 | `kind=authorization`。**只往已有生效活动里加号**。无活动零新建。 |
 | 只读 | `kind=inspect`。不写业务。 |
 | 酒店匹配 | 目录精确名称优先；仅当零命中时允许去掉末尾一个 `秒杀`/`开团` 词再试，且仍须唯一精确命中。相似/包含匹配不放行。 |
@@ -162,9 +162,9 @@
 
 | kind | 人话 | 要点 |
 |---|---|---|
-| `plan` | 开团 | 要稳定 `request_id`，以及 18–20 位 `plan_id` |
-| `authorization` | 秒杀加号 | 要 `request_id`、精确 `hotel`、1–40 个 `accounts`；不要带 `plan_id` |
-| `inspect` | 只读 | 与开团一样带 `plan_id`；不可把这次下单当成写入 |
+| `plan` | 开团 | 要稳定 `request_id`、18–20 位 `plan_id`，以及显式 `allow_write: true`。缺省或 `false` → 400 `plan_write_required`。成功时 `mode` 为 `write` |
+| `authorization` | 秒杀加号 | 要 `request_id`、精确 `hotel`、1–40 个 `accounts`；不要带 `plan_id`。不带 `allow_write: true` 时为只读（`mode=read_only`） |
+| `inspect` | 只读 | 与开团一样带 `plan_id`；`allow_write: true` 会被拒绝。`mode` 为 `read_only` |
 
 ### 4.3 不能承诺什么
 
@@ -189,7 +189,7 @@
 | `GATEWAY_PUBLIC_ORIGIN` | 是 | **纯 origin**（scheme+host[+port]），**不带 path**。用于 Origin 校验与 cookie `Secure` 判定（https 才带 Secure）。 | `https://gateway.example.com` |
 | `GATEWAY_ALLOWED_HOSTS` | 否 | 允许的 Host 头，逗号分隔；缺省取 `GATEWAY_PUBLIC_ORIGIN` 的 netloc。 | `gateway.example.com` |
 | `GATEWAY_COOKIE_PATH` | 否 | `gateway_session` 的 Path；缺省 `/`。使用前缀时应设为前缀。 | `/kaituan/` |
-| `GATEWAY_WORKER_ID` | 否（**产品化强烈建议填**） | 钉死唯一可领任务的 worker-id（字符集 `[A-Za-z0-9_.:-]`，≤96），落实“一套 = 1 gateway + 1 Mac worker”。不填时**第一个连上来的 worker-id 会被永久写入 `queue.sqlite3`**；之后其它 id 一律 409 `worker_pinned`。 | `mac-worker-1` |
+| `GATEWAY_WORKER_ID` | 是 | 钉死唯一可领任务的 worker-id（字符集 `[A-Za-z0-9_.:-]`，≤96）。未设置、空白或字符不合法时网关拒绝启动，不再把第一个连上的 worker 写入库。与已有 `queue.sqlite3` 里的 id 不一致 → 启动失败 / 409 `worker_pinned`。 | `mac-worker-1` |
 
 完整假值样例：
 
@@ -209,7 +209,7 @@ GATEWAY_WORKER_ID=mac-worker-1
 | 参数 | 说明 | 产品化取值 |
 |---|---|---|
 | `--bind` | 监听地址 | `127.0.0.1`（固定，不对公网） |
-| `--port` | 监听端口。**以部署单元 / systemd `--port` 为准。** 源码缺省 `8793`。产品化示例常用 `8792`，不是唯一正确端口 | `8792`（示例） |
+| `--port` | 监听端口。见 §3.1 端口规则。源码缺省 `8793`；部署样板 `<PORT>` 是 `8792`，且必须与 nginx 相同 | `8792`（示例 `<PORT>`） |
 | `--db` | 队列库（必填），新装为空库自动建表 | `<APP_DIR>/state/queue.sqlite3` |
 | `--static` | **OPTIONAL** 调试壳目录。不配也能只用 API。不是交付皮 | `<APP_DIR>/static` |
 
@@ -217,7 +217,7 @@ GATEWAY_WORKER_ID=mac-worker-1
 
 | 方法 路径（网关内部，nginx 前缀会被剥离） | 鉴权 | 用途 |
 |---|---|---|
-| `POST /api/login` body `{"token": "..."}` | 需同源 `Origin` | 换 `gateway_session` cookie；同 IP 10 分钟内 ≥10 次 → 429 |
+| `POST /api/login` body `{"token": "..."}` | 需同源 `Origin` | 换 `gateway_session` cookie（https 下带 `Secure`）。登录限流只在 TCP 对端是环回时采用 `X-Real-IP`，忽略 `X-Forwarded-For`。同一 IP 10 分钟内 ≥10 次 → 429。带 cookie 的写请求没有 `Origin` → 403 `origin_required` |
 | `POST /api/logout` | 会话/Bearer | 清 cookie |
 | `GET /api/status` | 会话或 Bearer USER | worker 在线/健康、队列计数 |
 | `GET /api/tasks` / `POST /api/tasks` | 会话或 Bearer USER | 任务列表 / 下单 |
@@ -260,10 +260,9 @@ GATEWAY_WORKER_ID=mac-worker-1
 | `--ca-file` | 可选：自签/私有 CA；主机名校验仍开启 | 空 |
 | `--probe` / `--once` | 仅元数据心跳（不碰安卓、不领任务）/ 跑一轮 | 验收时用 |
 
-> **新装必配（合入等 Mac 回归书面确认）：** 当前 `mac/outputs/trigger_launch.py` 把 `--server` 与 `--worker-id` 写死为现网值（对照见第 11 章，`EXAMPLE_LIVE_ONLY`）。新装必须改成自己的 gateway 与 worker-id，**不要把现网值当默认，也不要提交回仓库**。参数化在 [GitHub #4](https://github.com/a192289394-oss/kaituan-seckill/pull/4)（原 PR-3），**合入等 Mac 回归书面确认**（现网 Mac 先写好本地 `launch.json`）。本 PR 不改该脚本。参数化后的目标接口：
+地址和 worker-id 不写在 `trigger_launch.py` 里（[GitHub #4](https://github.com/a192289394-oss/kaituan-seckill/pull/4) 已合入）。`run` / `probe` / `once` 先读 `KAITUAN_SERVER`、`KAITUAN_WORKER_ID`，再读本机 `mac/work/trigger-worker/launch.json`。缺任一值就非 0 退出。执行配置是本机 `mac/outputs/trigger-worker.json`（从 example 复制，不提交）；文件不存在时启动器同样非 0 退出。
 
 ```sh
-# 目标（PR 落地后）：环境变量或旁路 json，二选一
 export KAITUAN_SERVER=https://gateway.example.com/kaituan
 export KAITUAN_WORKER_ID=mac-worker-1
 # 或 mac/work/trigger-worker/launch.json:
@@ -304,7 +303,7 @@ export KAITUAN_WORKER_ID=mac-worker-1
 | `<GATEWAY_HOST>` | 公网域名 | `gateway.example.com` |
 | `<PREFIX>` | 路径前缀（可改，改则 nginx / cookie_path / `--server` 三处同改） | `/kaituan/` |
 | `<APP_DIR>` | 安装目录 | `/opt/kaituan-gateway` |
-| `<PORT>` | 本机监听端口。以部署单元 / systemd `--port` 为准。产品化示例常用 `8792`；源码缺省 `8793`；都不是唯一正确端口 | `8792` |
+| `<PORT>` | 本机监听端口。见 §3.1 端口规则：等于这套 systemd `--port`，nginx 用同一个值。样板 `8792`；源码缺省 `8793` 只在不写 `--port` 时生效 | `8792` |
 | `<SVC_USER>` | 服务用户 | `kaituan` |
 | `<UNIT>` | systemd 单元名 | `kaituan-gateway` |
 
@@ -364,6 +363,8 @@ ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=<APP_DIR>/state
 PrivateTmp=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 
 [Install]
 WantedBy=multi-user.target
@@ -376,7 +377,7 @@ systemctl status <UNIT>.service --no-pager
 journalctl -u <UNIT> -n 20 --no-pager    # 应见 "listening; native execution remains on the pinned Mac"
 ```
 
-若启动即退出并提示 `Distinct nonempty GATEWAY_USER_TOKEN and GATEWAY_WORKER_TOKEN are required` 或 `GATEWAY_PUBLIC_ORIGIN is required`，回到 6.3 修正。
+若启动即退出并提示 `Distinct nonempty GATEWAY_USER_TOKEN and GATEWAY_WORKER_TOKEN are required`、`GATEWAY_PUBLIC_ORIGIN is required` 或 `GATEWAY_WORKER_ID is required`，回到 6.3 修正。`GATEWAY_WORKER_ID` 为空时不会先到先绑定。
 
 ### 6.5 nginx 样板（独立登录默认，**不注入 Bearer**）
 
@@ -405,7 +406,10 @@ server {
         proxy_http_version 1.1;
         proxy_set_header Host $host;               # 必须在 GATEWAY_ALLOWED_HOSTS 内
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # 登录限流只信任环回对端带来的 X-Real-IP，忽略 X-Forwarded-For。
+        # 用 $remote_addr 覆盖，不要用 $proxy_add_x_forwarded_for 追加客户端自带的值。
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
         # 原样透传客户端 Authorization 与 Cookie；独立登录模式下 nginx 不写入任何 token
         proxy_read_timeout 30s;
         client_max_body_size 1m;
@@ -487,10 +491,12 @@ chmod 0600 work/trigger-worker/credentials.json
 
 ### 7.4 指向自己的 gateway 与 worker-id
 
-> **新装必配。** 参数化合入见 [GitHub #4](https://github.com/a192289394-oss/kaituan-seckill/pull/4)（原 PR-3），**合入等 Mac 回归书面确认**。本 PR 不改 `trigger_launch.py`。
+用 §5.6 的环境变量或本机 `work/trigger-worker/launch.json`。不要改 `trigger_launch.py`，也不要写入第 11 章的 `EXAMPLE_LIVE_ONLY` 值。`<PORT>` 见 §3.1 端口规则。
 
-合入前（本机临时修改，不提交）：把 `outputs/trigger_launch.py` 中 `'--server','…'` 改为你的入口（本地 `http://127.0.0.1:<PORT>`，或 `https://gateway.example.com/kaituan`），`'--worker-id','…'` 改为 `'mac-worker-1'`。`<PORT>` 与这套 systemd `--port` 相同；产品化示例常用 `8792`，源码缺省 `8793` 不是唯一正确端口。不要保留附录里的 `EXAMPLE_LIVE_ONLY` 值。
-合入后：用 5.6 节的 `KAITUAN_SERVER` / `KAITUAN_WORKER_ID` 或 `work/trigger-worker/launch.json`。
+```sh
+export KAITUAN_SERVER=http://127.0.0.1:<PORT>    # 或 https://gateway.example.com/kaituan
+export KAITUAN_WORKER_ID=mac-worker-1            # 与 gateway.env 的 GATEWAY_WORKER_ID 相同
+```
 
 ### 7.5 单次探测 → 常驻
 
@@ -532,7 +538,7 @@ tail -n 50 work/trigger-worker/stderr.log
 | L1 | 安卓环境 | `GET /api/status`（或 worker health）里 Android / root / 来客 / 原生接口**各自**就绪（不能由心跳推断）。调试页只是可选视图 |
 | L2 | 来客与销帮身份 | 来客人工登录且身份核验通过（见 [install-mac-android-runtime.md](install-mac-android-runtime.md)）；销帮已人工登录。无自动登录 |
 | L3 | 只读单 | `kind=inspect`：完成、无写入、audit 可见 |
-| L4 | 开团一单 | `kind=plan`：一次提交 → `waiting_review` + `committed=true` → audit 与独立回读 |
+| L4 | 开团一单 | `kind=plan` 且显式 `allow_write: true`：一次提交 → `waiting_review` + `committed=true` → audit 与独立回读。缺该字段 → 400 `plan_write_required`，响应在成功时带 `mode=write` |
 | L5 | 秒杀一单（有活动） | `kind=authorization`：往已有生效活动加一个号；一次提交 + 回读 |
 | L6 | 秒杀零新建 | 对无生效活动的酒店下单：不新建，展示旧商品/原价/库存；`schedule` 类 resume 被拒 |
 | L7 | 不重发 | 对已提交单点 retry/resume：只回读，不产生第二次提交 |
@@ -552,10 +558,10 @@ tail -n 50 work/trigger-worker/stderr.log
 1. **每单只提交一次**；已发出只回读不重发；成功态 = `waiting_review` + `committed=true` + 独立回读。
 2. **秒杀只加号不建活动**：无生效活动零新建；拒绝 `schedule` 类 resume。
 3. **掉登停写**；**环境未就绪停写**（Android/root/来客/Frida/write_ready 任一未就绪）。Frida 是挂钩/注入工具，用来在模拟器里调用来客原生接口。
-4. **连败熔断**：K=3 次 / 15 分钟内连续失败即停写。
-5. **限流**：≤6 次/账号·小时；≤20 次/整机·小时；任意两次写间隔 ≥60 秒。
+4. **连败熔断**：K=3 次 / 15 分钟内连续失败即停写。连败、写入次数和自愈次数记在 `worker.sqlite3` 的 `meta.risk_counters`，worker 重启不清零。连续就绪后解除停写的计数只在内存里，重启后重新累计。
+5. **限流**：≤6 次/账号·小时；≤20 次/整机·小时；任意两次写间隔 ≥60 秒。同一份 `risk_counters` 持久化这些窗口。
 6. **未知不当 0**：平台未返回的状态/价格/库存显示“未知”。
-7. **去重**：`request_id` + `business_key`。
+7. **去重**：同一 `request_id` 若指纹不同则 409。`business_key` 不含 `request_id`。开团与只读是 `kind` + `plan_id`，终态后仍然占用，避免对同一计划再次同意。秒杀是酒店名与账号集合的摘要，该单进入终态后可以再下一单。
 8. **探活 ≠ 可写**：心跳在线不得冒充 Android/root/来客/Frida/write_ready。
 9. 来客登录只人工；不自动处理验证码/风控弹窗。
 
@@ -569,11 +575,13 @@ tail -n 50 work/trigger-worker/stderr.log
 |---|---|---|
 | 服务起不来：`Distinct nonempty … required` | 两个 token 有空值或相同 | 重新生成两个不同 token |
 | 服务起不来：`GATEWAY_PUBLIC_ORIGIN is required` | 未填 | 填纯 origin，如 `https://gateway.example.com` |
+| 服务起不来：`GATEWAY_WORKER_ID is required` | 未填或字符不合法 | 填与 Mac `--worker-id` 相同的 id；不要留空等第一个 worker 来绑定 |
+| 400 `plan_write_required` | `kind=plan` 没带 `allow_write: true` | 显式传 `true`。缺省不会变成只读单，也不会被改成写入 |
 | 403 `host` | Host 不在允许列表；nginx 未传 `Host $host`；本机直连未带 Host 头 | 校正 `GATEWAY_ALLOWED_HOSTS` 与 nginx |
 | 403 `origin` / `origin_required` / `cross_site` | 写操作或登录的 `Origin` 与 `GATEWAY_PUBLIC_ORIGIN` 不一致 | 用公网地址访问；origin 填纯 origin |
 | 登录 401/403 但 token 正确 | `GATEWAY_PUBLIC_ORIGIN` 带了 path 或与浏览器地址不一致（http/https、端口） | origin 必须与浏览器地址栏 origin 完全一致 |
 | 登录成功但刷新又要登录 | `GATEWAY_COOKIE_PATH` 与前缀不一致；http 下 Secure cookie 不生效 | 设为 `/kaituan/`；全站 https |
-| 登录 429 | 同 IP 10 分钟内 ≥10 次 | 等 10 分钟 |
+| 登录 429 | 同一限流 IP 10 分钟内 ≥10 次。nginx 后该 IP 是 `X-Real-IP`（仅当网关看到的 TCP 对端是环回）；直连则是 TCP 对端。`X-Forwarded-For` 不算 | 等 10 分钟。确认 nginx 用 `$remote_addr` 覆盖 `X-Real-IP` |
 | 静态页 404 / 资源 404 | 访问 `/kaituan` 无尾斜杠；`proxy_pass` 漏尾斜杠 | 按 6.5 补 301 与尾斜杠 |
 | 400 `query` | URL 带 `?` 参数 | 网关不支持 query，去掉 |
 | Mac probe 401 | `credentials.json` 与 `GATEWAY_WORKER_TOKEN` 不一致 | 重新写入 |
@@ -597,12 +605,12 @@ tail -n 50 work/trigger-worker/stderr.log
 | 服务器 IP | `1.12.208.101` | `<GATEWAY_HOST>` 解析到你的服务器 |
 | 域名 | `www.zhoukenuan.top` | `gateway.example.com` |
 | 目录 | `/opt/uiautomator2-trigger/` | `<APP_DIR>`（示例 `/opt/kaituan-gateway`） |
-| systemd 单元 | `uiautomator2-trigger.service`，`User=ubuntu`，这一套的 `--port` 是 `8792`（`EXAMPLE_LIVE_ONLY`，不是唯一正确端口） | `<UNIT>` / `<SVC_USER>` / `<PORT>`（以你的部署单元为准；产品化示例常用 `8792`，源码缺省 `8793`） |
+| systemd 单元 | `uiautomator2-trigger.service`，`User=ubuntu`，这一套历史 `--port` 是 `8792`（`EXAMPLE_LIVE_ONLY`） | `<UNIT>` / `<SVC_USER>` / `<PORT>`。新装用 `kaituan-gateway.service.example`，端口见 §3.1 |
 | 路径前缀 | `/kaituan/` | `<PREFIX>`（可沿用 `/kaituan/`） |
 | worker-id | `zhongjiawei-mac-native` | `mac-worker-1` |
 | 登录 | nginx `auth_request` + site-entry；操作员路径 nginx 写死 `Authorization: Bearer <USER_TOKEN>`；worker 路径 `auth_request off` 透传 | 默认独立登录（第 6.6 节） |
 | 部署脚本 | `mac/work/trigger-deploy/deploy_gateway.py`（写死 IP、nginx Bearer 注入、portal 卡片） | 本文第 6 章手工/脚本化步骤 |
-| Mac 启动器 | `EXAMPLE_LIVE_ONLY`：`trigger_launch.py` 写死 `--server https://1.12.208.101/kaituan --worker-id zhongjiawei-mac-native`。新装必配自己的值。参数化在 GitHub #4，合入等 Mac 回归书面确认；本 PR 不改该脚本 | 5.6 节 |
+| Mac 启动器 | 历史脚本曾写死 `--server https://1.12.208.101/kaituan --worker-id zhongjiawei-mac-native`（`EXAMPLE_LIVE_ONLY`）。当前 `trigger_launch.py` 不带这些值，见 §7.4 | §5.6 / §7.4 |
 
 ---
 

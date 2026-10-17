@@ -1,6 +1,8 @@
 # 当前项目：开团与秒杀纯网页入口
 
-先读 `outputs/README.md`，再按模块查源码/测试。当前服务器入口 `https://1.12.208.101/kaituan/`，Mac `cn.keyframe.web-kaituan` 执行。新主运行模块为 `trigger_gateway.py`、`trigger_worker.py`、`execution_store.py`、`web_activity.py` 及 native 模块。
+先读 `outputs/README.md`，再按模块查源码/测试。网关唯一源码是仓库 `server/trigger_gateway.py`。Mac 执行标签 `cn.keyframe.web-kaituan`。新主运行模块为 `trigger_worker.py`、`execution_store.py`、`web_activity.py` 及 native 模块。
+
+EXAMPLE_LIVE_ONLY / 历史：旧文档里的现网入口不要抄进新装。安装以 `docs/AI-INSTALL.md` 为准。
 
 本项目只保留网页入口，不包含聊天机器人、消息收单或群通知链路。不要从历史材料恢复旧入口、旧事件或旧任务；当前行为只以 `outputs/README.md`、现行源码、离线回归和线上只读回读为准。
 
